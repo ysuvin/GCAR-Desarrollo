@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:body>
+	
+	<f:metadata>
+		<f:event listener="#{newLoginBean.loadBD}" type="preRenderView" />
+	</f:metadata>
+	
+	<ui:composition template="/templates/homeTemplate.xhtml">
+		<ui:define name="title">Algebra Relacional - UV</ui:define>
+		<ui:define name="content">
+			
+			<h:form>			
+				<p:panel styleClass="divs">
+					<h:panelGrid columns="3" cellpadding="5">
+						<h:commandLink value="Inicio" styleClass="linkTitulo" action="home"/>
+						>
+						<h:outputText value="Ver Relación" styleClass="tituloPagina" rendered="#{usuario.tipo == 2}"/>
+						<h:outputText value="Gestionar Tupla" styleClass="tituloPagina" rendered="#{usuario.tipo == 1}"/>
+					</h:panelGrid>
+				</p:panel>
+			</h:form>
+			
+			<p:spacer/>
+			
+			<h:form id="form" onkeypress="if (event.keyCode == 13) {return false; }">
+			
+				<p:growl id="growl" showDetail="false"/>
+				
+<!-- 				Dialogo inicial -->
+				<p:dialog id="help1" widgetVar="dlg1" header="Ayuda" resizable="false" showEffect="fade" hideEffect="fade">
+					<p:fieldset legend="Gestionar Tupla" style="font-weight: bold;" >
+						<h2/>					
+						1. Seleccione una Relación marcando el botón <p:selectOneRadio style="display:inline-block"><f:selectItem/></p:selectOneRadio> <p/>
+						2. Seleccione el botón <p:commandButton value="Ver Relación" icon="ui-icon-arrowthick-1-e" readonly="true" /> para ver las Tuplas de la Relación seleccionada <p/>
+						3. Si desea buscar una Relación, ingrese su nombre en la sección <h:outputText value="Buscar Relación: " style="color:#e69700"/> <p:inputText style="width:150px" placeholder="Buscar" readonly="true"/>
+						<h2/>
+					</p:fieldset>
+			    </p:dialog>
+			    
+<!-- 			    Dialogo BD Boss -->
+			    <p:dialog id="help2" widgetVar="dlg2" header="Ayuda" resizable="false" showEffect="fade" hideEffect="fade">
+					<p:fieldset legend="Gestionar Tupla" style="font-weight: bold;" >
+						<h2/>
+						1. Seleccione el botón <p:commandButton value="Aceptar" icon="ui-icon-check" readonly="true" /> para aceptar y guardar cambios<p/> 
+						2. Seleccione el botón <p:commandButton value="Cancelar" icon="ui-icon-close" readonly="true" /> para cancelar los cambios realizados<p/>
+						3. Seleccione el botón <p:commandButton value="Atrás" icon="ui-icon-arrowthick-1-w" readonly="true" /> para volver y seleccionar otra Relación<p/>
+						
+						<h:outputText value="Agregar Tupla: " style="color:#e69700"/> <p/>
+						a. Seleccione el botón <p:commandButton value="Agregar Tupla" icon="ui-icon-circle-plus" readonly="true" /> para agregar una Relación <p/>
+						
+						<h:outputText value="Eliminar Tupla: " style="color:#e69700"/> <p/>
+						a. Seleccione una Tupla marcando el botón <p:selectOneRadio style="display:inline-block"><f:selectItem/></p:selectOneRadio> <p/>
+						b. Seleccione el botón <p:commandButton value="Eliminar Tupla" icon="ui-icon-trash" readonly="true" /> para eliminar la Tupla Seleccionada<p/>
+						
+						<h:outputText value="Modificar Tupla: " style="color:#e69700"/> <p/>
+						a. Seleccione una Tupla marcando el botón <p:selectOneRadio style="display:inline-block"><f:selectItem/></p:selectOneRadio> <p/>
+						b. Para modificar alguna tupla, debe seleccionar el botón  <h:outputText style="display: inline-block" styleClass="ui-icon ui-icon-pencil" />  para modificarla <p/>
+						c. Luego de modificar dicha tupla, seleccione el botón <h:outputText style="display: inline-block" styleClass="ui-icon ui-icon-check" /> para aceptar los cambios, de lo contrario seleccione el botón <h:outputText style="display: inline-block" styleClass="ui-icon ui-icon-close" />  para cancelarlos <p/>
+						d. Seleccione el botón <p:commandButton value="Modificar" icon="ui-icon-pencil" readonly="true" /> para modificar la Tupla seleccionada<p/>
+						
+						<h2/>
+					</p:fieldset>
+			    </p:dialog>
+			    
+<!-- 			    Dialogo BD No Boss -->
+			    <p:dialog id="help3" widgetVar="dlg3" header="Ayuda" resizable="false" showEffect="fade" hideEffect="fade">
+					<p:fieldset legend="Gestionar Tupla" style="font-weight: bold;" >
+						<h2/>
+						1. Seleccione el botón <p:commandButton value="Atrás" icon="ui-icon-arrowthick-1-w" readonly="true" /> para volver y seleccionar otra Relación<p/>
+						<h2/>
+					</p:fieldset>
+			    </p:dialog>
+				
+				<p:wizard backLabel="Atrás" nextLabel="Ver Relación" showStepStatus="false">
+					<p:tab title="Relaciones">
+						<p:fieldset styleClass="divs">
+							<f:facet name="legend">
+								<h:panelGrid columns="2" cellpadding="5">
+									<h:outputText value="Gestionar Tupla" />
+									<h:outputLink value="javascript:void(0)" onclick="PF('dlg1').show();" >
+										<span class="ui-icon ui-icon-help" />
+									</h:outputLink>
+								</h:panelGrid>
+							</f:facet>
+						<p:panel id="relaciones" style="margin-bottom:20px" styleClass="divs">	
+							<p:dataTable id="singleDT" var="relacion" value="#{gestionarTuplasBean.relaciones}" widgetVar="relacionesTable"
+						                 emptyMessage="No se encuentran Relaciones con este criterio" filteredValue="#{gestionarTuplasBean.filteredRelaciones}" 
+										 selection="#{gestionarTuplasBean.selectedRelacion}" rowKey="#{relacion.nombre}"
+										 paginator="true" rows="12"
+				             			 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+						        <f:facet name="header">
+						            <p:outputPanel style="text-align: right;">
+						                <h:outputText value="Buscar Relación: " />
+						                <p:inputText id="globalFilter" onkeyup="PF('relacionesTable').filter()" style="width:150px" placeholder="Buscar"/>
+						            </p:outputPanel>
+						        </f:facet>
+						        <p:column selectionMode="single" style="width:15px;text-align:center"/>
+						        <p:column headerText="Nombre" filterBy="#{relacion.nombre}" filterStyle="display:none" filterMatchMode="contains">
+						            <h:outputText value="#{relacion.nombre}" />
+						        </p:column>
+						        <p:column headerText="Cantidad de Atributos">
+						            <h:outputText value="#{relacion.atributos.size()}" />
+						        </p:column>
+						    </p:dataTable>		
+						</p:panel>
+						</p:fieldset>		    
+				    </p:tab>
+				    
+				    <p:tab title="Tuplas">
+				    	
+				    	<ui:fragment rendered="#{usuario.tipo == 1}">
+				    	
+						<!-- Vista Profesor -->
+				    	
+				    		<p:fieldset styleClass="divs">
+								<f:facet name="legend">
+									<h:panelGrid columns="2" cellpadding="5">
+										<h:outputText value="Gestionar Tupla" />
+										<h:outputLink value="javascript:void(0)" onclick="PF('dlg2').show();" >
+											<span class="ui-icon ui-icon-help" />
+										</h:outputLink>
+									</h:panelGrid>
+								</f:facet>
+			    			<p:panel style="margin-bottom:20px" styleClass="divs" rendered="#{gestionarTuplasBean.selectedRelacion != null ? 'true' : 'false'}">							
+			    				
+								<h:panelGrid columns="3">
+									<p:commandButton value="Agregar Tupla" id="agregarTupla" icon="ui-icon-circle-plus" actionListener="#{gestionarTuplasBean.agregarTupla}"
+									update=":form:tuplas"/>
+									
+									<p:commandButton value="Eliminar Tupla" id="eliminarTupla" icon="ui-icon-trash" actionListener="#{gestionarTuplasBean.eliminarTupla}"
+									update=":form:tuplas :form:growl"/>
+									
+									<p:commandButton value="Editar Tupla" id="modificarTupla" icon="ui-icon-pencil" oncomplete="PF('editarDialog').show()"
+									update=":form:editarDetail" actionListener="#{gestionarTuplasBean.ventanaModificarTupla}"/>	
+									
+								</h:panelGrid>
+								    								
+			    				<p:dataTable value="#{gestionarTuplasBean.selectedRelacion.getTuplasBean()}" var="item" style="width:100%!important;"
+									emptyMessage="Esta Relación no tiene Tuplas" id="tuplas" editable="true"
+								 	selection="#{gestionarTuplasBean.selectedTupla}" rowKey="#{item}"
+								 	scrollable="true" scrollHeight="150">
+									<f:facet name="header">
+										<h:outputText value="#{gestionarTuplasBean.nombreRelacion}" />
+									</f:facet>								
+									<p:column selectionMode="single" style="width:15px;text-align:center"/>
+				    				<p:columns value="#{gestionarTuplasBean.selectedRelacion.atributos}" var="atributo" columnIndexVar="i"> 
+				        				<f:facet name="header">
+											#{atributo.nombre} (#{atributo.tipo})
+				        				</f:facet>
+				        				<h:outputText value="#{item.atributos[i] != null ? item.atributos[i] : ''}"/>
+<!-- 				        				<p:cellEditor> -->
+<!-- 					        				<f:facet name="output"> -->
+<!-- 						        				<h:outputText value="#{item.atributos[i] != null ? item.atributos[i] : ''}"/> -->
+<!-- 						        			</f:facet> -->
+<!-- 						        			<f:facet name="input"> -->
+<!-- 						        				<p:inputText value="#{item.atributos[i]}" style="width:95%;"/> -->
+<!-- 						        			</f:facet> -->
+<!-- 						        		</p:cellEditor> -->
+				    				</p:columns>
+<!-- 				    				<p:column style="width:25px"> -->
+<!-- 							           	<p:rowEditor id="editar"/> -->
+<!-- 							           	<p:tooltip for="editar" value="Editar Tupla"/>			           	 -->
+<!-- 							       </p:column>			    				 -->
+								</p:dataTable>
+							
+							<h:panelGrid columns="2" cellpadding="5">
+								<p:commandButton value="Aceptar" icon="ui-icon-check" action="#{gestionarTuplasBean.aceptar}"
+									update=":form:tuplas :form:growl"/>
+								<p:commandButton value="Cancelar" icon="ui-icon-close" action="#{gestionarTuplasBean.cancelar}"
+									update="form"/>	
+							</h:panelGrid>
+							
+							</p:panel>					
+							
+							<p:panel styleClass="divs" style="margin-bottom:20px" rendered="#{gestionarTuplasBean.selectedRelacion == null ? 'true' : 'false'}">
+								<p:messages></p:messages>
+							</p:panel>
+							</p:fieldset>
+							
+						</ui:fragment>
+						
+						<ui:fragment rendered="#{usuario.tipo == 2}">
+						
+						<!-- Vista Alumno -->
+						
+							<ui:fragment rendered="#{usuario.rut.equals(bd.rut) ? 'true' : 'false'}">
+				    	
+				    			<p:fieldset styleClass="divs">
+									<f:facet name="legend">
+										<h:panelGrid columns="2" cellpadding="5">
+											<h:outputText value="Gestionar Tupla" />
+											<h:outputLink value="javascript:void(0)" onclick="PF('dlg2').show();" >
+												<span class="ui-icon ui-icon-help" />
+											</h:outputLink>
+										</h:panelGrid>
+									</f:facet>
+				    			<p:panel header="Ver Relación" style="margin-bottom:20px" rendered="#{gestionarTuplasBean.selectedRelacion != null ? 'true' : 'false'}">							
+				    				
+									<h:panelGrid columns="3">
+										<p:commandButton value="Agregar Tupla" id="agregarTupla2" icon="ui-icon-circle-plus" actionListener="#{gestionarTuplasBean.agregarTupla}"
+										update=":form:tuplas2"/>
+										
+										<p:commandButton value="Eliminar Tupla" id="eliminarTupla2" icon="ui-icon-trash" actionListener="#{gestionarTuplasBean.eliminarTupla}"
+										update=":form:tuplas2 :form:growl"/>
+										
+										<p:commandButton value="Editar Tupla" id="modificarTupla2" icon="ui-icon-pencil" oncomplete="PF('editarDialog').show()"
+										update=":form:editarDetail" actionListener="#{gestionarTuplasBean.ventanaModificarTupla}"/>		
+											
+									</h:panelGrid>
+									    								
+				    				<p:dataTable value="#{gestionarTuplasBean.selectedRelacion.getTuplasBean()}" var="item" style="width:100%!important;"
+										emptyMessage="Esta Relación no tiene Tuplas" id="tuplas2" editable="true"
+									 	selection="#{gestionarTuplasBean.selectedTupla}" rowKey="#{item}">
+										<f:facet name="header">
+											<h:outputText value="#{gestionarTuplasBean.nombreRelacion}" />
+										</f:facet>
+										<p:column selectionMode="single" style="width:16px;text-align:center"/>
+					    				<p:columns value="#{gestionarTuplasBean.selectedRelacion.atributos}" var="atributo" columnIndexVar="i"> 
+					        				<f:facet name="header">
+												#{atributo.nombre}
+					        				</f:facet>
+					        				<h:outputText value="#{item.atributos[i] != null ? item.atributos[i] : ''}"/>
+<!-- 					        				<p:cellEditor> -->
+<!-- 						        				<f:facet name="output"> -->
+<!-- 							        				<h:outputText value="#{item.atributos[i] != null ? item.atributos[i] : ''}"/> -->
+<!-- 							        			</f:facet> -->
+<!-- 							        			<f:facet name="input"> -->
+<!-- 							        				<p:inputText value="#{item.atributos[i]}"/> -->
+<!-- 							        			</f:facet> -->
+<!-- 							        		</p:cellEditor> -->
+					    				</p:columns>
+<!-- 					    				<p:column style="width:32px"> -->
+<!-- 								           	<p:rowEditor id="editar"/> -->
+<!-- 								           	<p:tooltip for="editar" value="Editar Tupla"/>			           	 -->
+<!-- 								       </p:column> -->
+									</p:dataTable>
+								
+								<h:panelGrid columns="2" cellpadding="5">
+									<p:commandButton value="Aceptar" icon="ui-icon-check" action="#{gestionarTuplasBean.aceptar}"
+										update=":form:tuplas2 :form:growl"/>
+									<p:commandButton value="Cancelar" icon="ui-icon-close" action="#{gestionarTuplasBean.cancelar}"
+										update="form"/>	
+								</h:panelGrid>
+								
+								</p:panel>															
+								
+								<p:panel styleClass="divs" style="margin-bottom:20px" rendered="#{gestionarTuplasBean.selectedRelacion == null ? 'true' : 'false'}">
+									<p:messages></p:messages>
+								</p:panel>
+								
+								</p:fieldset>	
+								
+							</ui:fragment>
+							
+							<ui:fragment rendered="#{usuario.rut.equals(bd.rut) ? 'false' : 'true'}">
+							
+								<p:fieldset styleClass="divs">
+									<f:facet name="legend">
+										<h:panelGrid columns="2" cellpadding="10">
+											<h:outputText value="Gestionar Tupla" />
+											<h:outputLink value="javascript:void(0)" onclick="PF('dlg3').show();" >
+												<span class="ui-icon ui-icon-help" />
+											</h:outputLink>
+										</h:panelGrid>
+									</f:facet>
+				    			<p:panel styleClass="divs" style="margin-bottom:20px" rendered="#{gestionarTuplasBean.selectedRelacion != null ? 'true' : 'false'}">							
+									
+				    				<p:dataTable value="#{gestionarTuplasBean.selectedRelacion.getTuplasBean()}" var="item" style="width:100%!important;"
+										emptyMessage="Esta Relación no tiene Tuplas">
+										<f:facet name="header">
+											<h:outputText value="#{gestionarTuplasBean.nombreRelacion}" />
+										</f:facet>
+					    				<p:columns value="#{gestionarTuplasBean.selectedRelacion.atributos}" var="atributo" columnIndexVar="i"> 
+					        				<f:facet name="header">
+												#{atributo.nombre}
+					        				</f:facet>
+							        		<h:outputText value="#{item.atributos[i] != null ? item.atributos[i] : ''}"/>
+					    				</p:columns>		    		
+									</p:dataTable>
+								
+								</p:panel>
+								
+								<p:panel styleClass="divs" style="margin-bottom:20px" rendered="#{gestionarTuplasBean.selectedRelacion == null ? 'true' : 'false'}">
+									<p:messages></p:messages>
+								</p:panel>							
+								
+								</p:fieldset>
+							</ui:fragment>
+						
+						</ui:fragment>
+											
+				    </p:tab>			    
+		    </p:wizard>	
+		    
+		    <p:dialog header="Editar Tupla" widgetVar="editarDialog" modal="false" showEffect="fade" hideEffect="fade" resizable="false">
+		    	<p:outputPanel id="editarDetail" style="text-align:left;">	 
+	    		
+		    		<p:messages/>
+		    		
+		    		<p:fieldset rendered="#{gestionarTuplasBean.selectedTupla != null}">
+			           	<f:facet name="legend">
+			            <h:panelGrid styleClass="divs" columns="2" cellpadding="10">
+				        	<span class="ui-icon ui-icon-info" />	        		
+				        	<h:outputText  value="Seleccione el lápiz de la izquierda para editar la fila. Puede aceptar o cancelar la modificación con los botones de la izquierda" style="font-weight: bold;"/>				        	
+			        	</h:panelGrid>	
+			            </f:facet>
+		    		<p:dataTable value="#{gestionarTuplasBean.selectedTupla}" var="selectedItem" style="width:1100px!important;"
+						id="tuplasSeleccionada" editable="true" editMode="row" >
+						<f:facet name="header">
+							<h:outputText value="#{gestionarTuplasBean.nombreRelacion}" />
+						</f:facet>								
+						<p:column style="width:25px">
+				           	<p:rowEditor id="editar"/>
+				           	<p:tooltip for="editar" value="Editar Tupla"/>			           	
+				       </p:column>	
+	    				<p:columns value="#{gestionarTuplasBean.selectedRelacion.atributos}" var="atributo" columnIndexVar="i"> 
+	        				<f:facet name="header">
+								#{atributo.nombre} (#{atributo.tipo})
+	        				</f:facet>
+	        				<p:cellEditor>
+		        				<f:facet name="output">
+			        				<h:outputText value="#{selectedItem.atributos[i] != null ? selectedItem.atributos[i] : ''}"/>
+			        			</f:facet>
+			        			<f:facet name="input">
+			        				<p:inputText value="#{selectedItem.atributos[i]}" style="width:95%;"/>
+			        			</f:facet>
+			        		</p:cellEditor>
+	    				</p:columns>		    				
+					</p:dataTable>
+		    		
+		    		</p:fieldset>
+		    		
+		    		<h:panelGrid style="margin: 0 auto !important">
+		    			<p:commandButton value="Modificar" icon="ui-icon-pencil" oncomplete="PF('editarDialog').hide()"
+		    				update=":form:tuplas :form:tuplas2" actionListener="#{gestionarTuplasBean.modificarTupla}"/>
+		    		</h:panelGrid>
+		    	
+		    	</p:outputPanel>
+		    </p:dialog>   
+				
+			</h:form>
+		</ui:define>
+	</ui:composition>
+
+
+</h:body>
+</html>

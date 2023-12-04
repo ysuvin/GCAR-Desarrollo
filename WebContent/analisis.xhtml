@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+
+<h:body>
+
+	<f:metadata>
+		<f:event listener="#{newLoginBean.isAdmin}" type="preRenderView" />
+	</f:metadata>
+	
+	<ui:composition template="/templates/analisisTemplate.xhtml">
+		<ui:define name="title">Algebra Relacional - UV</ui:define>
+		<ui:define name="content">
+	
+			<h:form>			
+				<p:panel styleClass="divs">
+					<h:panelGrid columns="3" cellpadding="5">
+						<h:commandLink value="Inicio" styleClass="linkTitulo" action="home"/>
+						>
+						<h:outputText value="Análisis de Datos" styleClass="tituloPagina"/>
+					</h:panelGrid>
+				</p:panel>
+			</h:form>
+			
+			<p:spacer/>
+			
+			<h:form id="form" onkeypress="if (event.keyCode == 13) {return false; }">
+				<p:growl id="growl" showDetail="false"/>
+				
+				<p:dialog id="help" widgetVar="dlg" header="Ayuda" resizable="false" showEffect="fade" hideEffect="fade">
+					<p:fieldset legend="Análisis de Datos" style="font-weight: bold;" >
+						<h2/>
+						<h:outputText value="Ejecución del análisis: " style="color:#e69700"/> <p/>
+						a. En la sección <h:outputText value="Tecnica de Mineria" style="color:#e69700"/> se puede seleccionar la tecnica de minería desea <p/>
+						b. Seleccione el botón <p:commandButton value="Ejecutar" icon="ui-icon-check" readonly="true" /> para realizar el análisis <h:outputText value="ARFF" style="color:#e69700"/> <p/>
+						
+						<h2/>
+					</p:fieldset>
+			    </p:dialog> 
+	 
+				<p:fieldset styleClass="divs">
+					<f:facet name="legend">
+						<h:panelGrid columns="2" cellpadding="fd5">
+							<h:outputText value="Análisis de Datos" />
+							<h:outputLink value="javascript:void(0)" onclick="PF('dlg').show();" >
+								<span class="ui-icon ui-icon-help" />
+							</h:outputLink>
+						</h:panelGrid>
+					</f:facet>
+				</p:fieldset>
+			
+			
+				
+				<p:spacer/> 
+				
+				<p:panel id="tablaPanel" style="height:85px!important" header="Seleccion de Técnica de Minería">
+					
+						<h:selectOneMenu style="width=250px"  >
+		         			<f:selectItem itemValue="A" itemLabel="Clasificación NaiveBayes (Ingenuo)" />
+		         			<f:selectItem itemValue="B" itemLabel="Clasificación BayesNet (Red Bayesiana)" />
+		         			<f:selectItem itemValue="C" itemLabel="Reglas de Asociacion Apriori" />
+		       			</h:selectOneMenu>
+		       			<p:spacer/>
+		       			<p:commandButton id="ejecutar" type="push" title="Ejecutar" value="Ejecutar" ajax="true" 
+						action="#{dtGestionAnalisisBean.naiveBayes}" icon="ui-icon-check"/>
+					
+				</p:panel>
+				
+				<p:spacer/>
+				
+				<p:panel id="tablaPanel2" style="height:85px!important" header="Configuracion de Parametros">
+					
+					
+					
+				</p:panel>
+				
+				<p:spacer/>
+				
+				<p:panel id="tablaPanel3" style="height:350px!important" header="Resultado">
+				<p:dataTable  scrollable="true" scrollHeight="150" var="item" style="width:100%!important;"
+					emptyMessage="Seleccione una tecnica de mineria y presione el boton Ejecutar"> 
+					
+					 
+				</p:dataTable>
+				</p:panel>
+				
+				
+				
+			</h:form>	
+				
+				
+	
+		</ui:define>
+	</ui:composition>
+
+</h:body>
+
+</html>

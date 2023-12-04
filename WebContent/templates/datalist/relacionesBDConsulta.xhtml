@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"  
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:body>
+	<h:form id="formDataList">
+
+	<p:outputPanel autoUpdate="true">
+
+		<p:dataList value="#{bd.relacionesBean}" var="relBean" type="ordered" emptyMessage="No hay relaciones en esta base de datos" styleClass="miDataList">
+		    <f:facet name="header">
+		        Relaciones
+		    </f:facet>
+		     <strong>#{relBean.getNombre()}</strong>
+		    <ul>
+		        <ui:repeat value="#{relBean.atributos}" var="atributo" varStatus="loop">
+		            <li>
+		                <h:outputText rendered="#{not empty atributo.nombre}" value="#{atributo.nombre} " />
+		                <h:outputText rendered="#{not empty atributo.esPrimario}" value="#{atributo.esPrimario eq 'Sí' ? '(PK)' : atributo.esPrimario eq 'No' ? '' : atributo.esPrimario}" style="font-style: italic;"/>
+		                <h:outputText rendered="#{not empty atributo.tipo}" value=" #{atributo.tipo}" escape="false" style="font-style: italic;"/>
+		            </li>
+		        </ui:repeat>
+		    </ul>
+		</p:dataList>
+		        
+        
+	    <h3/>
+	    <p:dataList value="#{bd.relacionesAuxiliares}" var="relBean" type="ordered"
+	    	emptyMessage="No hay relaciones auxiliares en esta base de datos" styleClass="miDataList">
+	        <f:facet name="header">
+	            Relaciones Auxiliares
+	        </f:facet>
+	        
+	       <div class="miAccordionPanel">
+			  <div class="miAccordionTab">
+			    <h3 class="miAccordionTabTitle" onclick="toggleAccordion(this)">#{relBean.getNombre()}</h3>
+			    <div class="miAccordionTabContent">
+			      <ul>
+			        <ui:repeat value="#{relBean.atributos}" var="atributo" varStatus="loop">
+			          <li>
+			            <h:outputText rendered="#{not empty atributo.nombre}" value="#{atributo.nombre}" />
+			            <h:outputText rendered="#{not empty atributo.esPrimario}" value="#{atributo.esPrimario eq 'Sí' ? '(PK)' : atributo.esPrimario eq 'No' ? '' : atributo.esPrimario}" style="font-style: italic;" />
+			            <h:outputText rendered="#{not empty atributo.tipo}" value=" #{atributo.tipo}" escape="false" style="font-style: italic;" />
+			          </li>
+			        </ui:repeat>
+			      </ul>
+			    </div>
+			  </div>
+			</div>
+
+
+
+
+	    </p:dataList>
+	</p:outputPanel>
+	
+		<h3/>
+	    <h:panelGrid style="margin: 0 auto !important">
+	    	<p:commandButton icon="ui-icon-close" value="Cerrar Base de Datos" action="#{dataListView.cerrarBD}" ajax="false" />
+	    </h:panelGrid>
+	    
+	    <script>
+		    function toggleAccordion(element) {
+		    	  element.classList.toggle("active");
+		    	  var content = element.nextElementSibling;
+		    	  content.classList.toggle("active");
+		    	}
+	    </script>
+
+	</h:form>
+</h:body>
+
+</html>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="GCAR" default="war">
+ 
+    <path id="compile.classpath">
+        <fileset dir="WebContent/WEB-INF/lib">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="lib">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+     
+    <target name="init">
+        <mkdir dir="build/classes"/>
+        <mkdir dir="dist" />
+    </target>
+     
+    <target name="compile" depends="init" >
+        <javac target="1.8" source="1.8" destdir="build/classes" debug="true" srcdir="src" includeantruntime="false">
+            <classpath refid="compile.classpath"/>
+        </javac>
+    </target>
+     
+    <target name="war" depends="compile">
+        <war destfile="dist/GCAR.war" webxml="WebContent/WEB-INF/web.xml">
+            <fileset dir="WebContent"/>
+            <lib dir="WebContent/WEB-INF/lib"/>
+            <classes dir="build/classes"/>
+        </war>
+    </target>
+     
+    <target name="clean">
+        <delete dir="dist" />
+        <delete dir="build" />
+    </target>
+     
+</project>

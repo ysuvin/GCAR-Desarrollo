@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"  
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+<h:body>
+	<h:form id="loginForm">
+			<p:panel id="panel" header="Login">			 
+		        <h:panelGrid columns="2" style="margin:0 auto !important;">
+		        
+		            <p:outputLabel value="Rut " />
+		            <p:inputText id="rut" value="#{userBean.rut}" required="false" size="14"
+		            	validatorMessage="Rut: Ingrese 8 Digitos, sin puntos ni dígito verificador" requiredMessage="Debe ingresar su Rut">
+		            	<f:validateRegex pattern="[0-9]{8}$" />
+		            	<p:watermark for="rut" value="Ej: 12345678"/>	 
+		            </p:inputText >        
+		            			            
+		            <p:outputLabel value="Pass " />
+		            <p:password id="pass" value="#{userBean.pass}" feedback="false" required="false" 
+		            	requiredMessage="Debe ingresar su contraseña" size="14"/>		
+		            
+		            <p:spacer/>
+		            <p:commandButton action="#{newLoginBean.loginUser}" value="Ingresar" update="loginForm" icon="ui-icon-check" ajax="false"
+		         		style="margin:0 auto !important;"/>
+	 
+		        </h:panelGrid>    
+		    </p:panel>
+		</h:form>
+</h:body>
+
+</html>

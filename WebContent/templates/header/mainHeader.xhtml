@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+	
+<h:body>
+
+  		<h:form>
+  			<h:panelGrid columns="3" columnClasses="logoUV,titulo,login">
+  			
+  					<h:graphicImage value="#{resource['img:logo_uv.png']}" styleClass="logo"/>
+
+				<h:panelGrid rendered="#{usuario != null}" >
+	  				<p:commandLink action="home" styleClass="linkTitulo" >
+	  					<h:panelGrid>
+	  						<h:outputText id="titulo" value="GCAR - Gestión de Consultas en Álgebra Relacional y SQL" styleClass="tituloHeader"/>
+	  					</h:panelGrid>
+	  				</p:commandLink>
+	  			</h:panelGrid>	
+	  			  				
+  				<h:panelGrid columns="1" cellpadding="4" columnClasses="left,right" style="width: 100%; display: flex; justify-content: center;" >
+  					<h:outputText value="#{usuario.nombre1} #{usuario.paterno}" styleClass="nombreHeader"/>
+  					<h:outputText value="#{usuario.tipo == 1 ? 'Profesor' : 'Alumno'}"/>
+  				</h:panelGrid>
+  				
+  			</h:panelGrid>
+   		</h:form>
+
+</h:body>
+
+</html>

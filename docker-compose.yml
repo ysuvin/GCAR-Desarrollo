@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:9.5
+    restart: always
+    container_name: serverGcar
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: "gcar"      
+      POSTGRES_PASSWORD: "admin"
+      POSTGRES_DB: "gcar"
+    ports:
+        - "5432:5432"
+    volumes:
+      - ./postgres.conf:/etc/postgresql/postgresql.conf
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 9080:8080
+
+  tomcat:
+    image: tomcat:9.0
+    container_name: tomcat
+    env_file:
+      - .env
+    volumes:
+      - ./dist/GCAR.war:/usr/local/tomcat/webapps/GCAR.war
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    networks:
+      - default

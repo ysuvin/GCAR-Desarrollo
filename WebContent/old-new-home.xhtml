@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+  
+<h:body>
+
+	<ui:composition template="/templates/newHomeTemplate.xhtml">
+		<ui:define name="title">GCAR | Inicio</ui:define>
+		<ui:define name="content">
+		
+			<!-- Content Wrapper. Contains page content -->
+			<div class="content-wrapper">
+	        	<!-- Content Header (Page header) -->
+	        	<section class="content-header">
+	          		<h1>
+	            		Inicio
+	          		</h1>
+	          		<ol class="breadcrumb">
+	            		<li><a href="home.xhtml"><i class="fa fa-home"></i>Inicio</a></li>
+	          		</ol>
+	        	</section>
+	
+	       	 	<!-- Main content -->
+	        	<section class="content">
+	
+					<div class="row">
+	            		<div class="col-md-6">
+	            			<div class="box box-primary">
+	            				<div class="box-header with-border">
+	            					<i class="fa fa-user"></i>
+	            					<h3 class="box-title">Datos Usuario</h3>
+	            				</div>
+	            				<div class="box-body">
+	            					<dl class="dl-horizontal">
+	            						<dt>Rut</dt>
+	            						<dd>#{usuario.rut}</dd>
+	            						<dt>Nombre</dt>
+	            						<dd>#{usuario.nombre1} #{usuario.nombre2} #{usuario.paterno} #{usuario.materno}</dd>
+	            						<dt>Email</dt>
+	            						<dd>#{usuario.mail}</dd>
+	            					</dl>
+	            				</div>
+	            			</div>
+	            		</div>
+	            		<div class="col-md-6">
+			              	<div class="box box-info">
+			                	<div class="box-header with-border">
+			                  		<i class="fa fa-archive"></i>
+			                  		<h3 class="box-title">BD Creadas</h3>
+			                	</div><!-- /.box-header -->
+			                	<div class="box-body">
+			                		<h:dataTable value="#{homeView.basesDatos}" var="baseDato">
+			                			<h:column>
+			                				<ol>
+			                					<li>#{baseDato.getNombre()}</li>
+			                				</ol>
+			                			</h:column>
+			                		</h:dataTable>
+			                	</div><!-- /.box-body -->
+			              	</div><!-- /.box -->
+			            </div><!-- ./col -->
+					</div><!-- /.row -->
+					<div class="row">
+			            <div class="col-md-12">
+			              	<div class="box box-warning">
+			                	<div class="box-header with-border">
+			                  		<i class="fa fa-thumbs-o-up"></i>
+			                  		<h3 class="box-title">¿Qué es <b>GC</b>AR?</h3>
+			                	</div><!-- /.box-header -->
+			                	<div class="box-body">
+				                	<p>
+				                		<strong>GCAR</strong> es una herramienta ideada para la ejecución de consultas en 
+										<strong>Álgebra Relacional</strong> que utiliza 
+										<a style="color:#e69700;font-weight: bold;" href="http://www.postgresql.org">PostgreSQL</a> 
+										tanto para la creación de Bases de Datos, como para el ingreso de consultas en <strong>Álgebra Relacional</strong>. 
+										Dentro de sus capacidades, <strong>GCAR</strong> es capaz de ejecutar consultas en 
+										<strong>Álgebra Relacional</strong>, generar y modificar Bases de Datos para el ingreso de consultas, 
+										crear Guias de Ejercicios para cada Base de Datos para medir el desempeño de los Alumnos y 
+										la descarga de archivos 
+										<a style="color:#e69700;font-weight: bold;" href="http://weka.wikispaces.com/ARFF">.ARFF</a> 
+										con los datos del trabajo de los alumnos mientras realizan las Guias de Ejercicios, para ser 
+										analizado con 
+										<a style="color:#e69700;font-weight: bold;" href="http://weka.wikispaces.com/">WEKA</a>, 
+										una herramienta para el análisis de datos utilizando técnicas de 
+										<a style="color:#e69700;font-weight: bold;" href="http://es.wikipedia.org/wiki/Minería_de_datos">Minería de Datos</a>
+									</p>
+									<p>
+										<strong>GCAR</strong> es el resultado del Trabajo de Título: <strong>"Desarrollo de una aplicación para realizar cosultas en 
+										Álgebra Relacional"</strong> para optar al título de <strong>Ingeniero Civil en Informática</strong> en la <strong>Universidad de 
+										Valparaíso</strong> <p/>
+									</p>
+									<h:panelGrid style="text-align: right;width:100%">
+										<h:outputText value="Alumno: Sebastián Segovia" style="color:#e69700;font-weight: bold;"/>
+										<h:outputText value="Profesor Guía: Eliana Providel" style="color:#e69700;font-weight: bold;" />
+									</h:panelGrid>
+			                	</div><!-- /.box-body -->
+			              	</div><!-- /.box -->
+			            </div><!-- ./col -->
+	          		</div><!-- /.row -->
+	        	</section><!-- /.content -->
+	      	</div><!-- /.content-wrapper -->
+	      	
+	      	<footer class="main-footer">
+		        <div class="pull-right hidden-xs">
+		          <b>Version</b> 2.0
+		        </div>
+		        <strong>Copyright2014-2015 <a href="http://almsaeedstudio.com">Almsaeed Studio</a>.</strong> All rights reserved.
+		      </footer>
+		
+		</ui:define>
+	</ui:composition>
+	
+  </h:body>
+</html>

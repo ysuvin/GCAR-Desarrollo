@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:body>
+	
+	<f:metadata>
+		<f:event listener="#{newLoginBean.loadBD}" type="preRenderView" />
+	</f:metadata>
+	
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"/>
+	<ui:composition template="/templates/consultaSQLtemplate.xhtml">
+		<ui:define name="title">Algebra Relacional - UV</ui:define>
+		<ui:define name="content">
+		
+			<h:form>			
+				<p:panel styleClass="divs">
+					<h:panelGrid columns="3" cellpadding="5">
+						<h:commandLink value="Inicio" styleClass="linkTitulo" action="home"/>
+						>
+						<h:outputText value="Hacer Consulta SQL" styleClass="tituloPagina"/>
+					</h:panelGrid>
+				</p:panel>
+			</h:form>
+			
+			<p:spacer/>
+			
+			<h:form id="form" onkeypress="if (event.keyCode == 13) {return false; }">
+				<p:growl id="growl" showDetail="false"/>
+				
+				<p:dialog id="help" widgetVar="dlg" header="Ayuda" resizable="false" showEffect="fade" hideEffect="fade" style="width:1000px;">
+					<p:scrollPanel style="width:100%; height: auto; border: none;">
+						<p:fieldset legend="Hacer Consulta SQL" style="font-weight: bold;" >
+							<h2/>
+							1. En la secci&#243;n <h:outputText value="Consultas" style="color:#e69700"/> si usted posciciona el puntero sobre uno de los 16 botones, se desplgar&#225; un cuadro de ayuda para utilizar la <h:outputText value="Cl&#225;usula" style="color:#e69700"/> de SQL<p/>
+							2. En la secci&#243;n <h:outputText value="Consultas" style="color:#e69700"/> usted puede seleccionar cualquier bot&#243;n y se insertar&#225; la <h:outputText value="Cl&#225;usula" style="color:#e69700"/> dentro del cuadro de texto <p/>													
+							3. Luego de ingresar la consulta, seleccione el bot&#243;n <p:commandButton value="Ejecutar" icon="ui-icon-check" readonly="true" /> para ejecutar la consulta <p/>
+							4. En la secci&#243;n <p:commandButton value="Historial" readonly="true" /> se guarda el historial de consultas realizadas <p/>
+							5. El nombre de las <h:outputText value="Relaciones" style="color:#e69700"/>, <h:outputText value="Atributos" style="color:#e69700"/>, <h:outputText value="Tipo de Dato" style="color:#e69700"/> y <h:outputText value="Clave Primaria" style="color:#e69700"/> de la Base de Datos cargada, adem&#225;s de las <h:outputText value="Relaciones Auxiliares" style="color:#e69700"/> con todos sus datos, se muestran a la izquierda de la pantalla <p/>
+							6. Todas las <h:outputText value="Cl&#225;usulas" style="color:#e69700"/> de <strong>Manipulaci&#243;n de tablas</strong> estan bloqueadas. Solo se permiten <h:outputText value="Cl&#225;usulas" style="color:#e69700"/> de consulta <p/>
+							<h2/>
+						</p:fieldset>
+					</p:scrollPanel>
+			    </p:dialog>  
+			    
+				<p:fieldset styleClass="divs">
+				<f:facet name="legend">
+					<h:panelGrid columns="2" cellpadding="5">
+						<h:outputText value="Hacer Consulta SQL" />
+						<h:outputLink value="javascript:void(0)" onclick="PF('dlg').show();" >
+							<span class="ui-icon ui-icon-help" />
+						</h:outputLink>
+					</h:panelGrid>
+				</f:facet>
+				
+						
+				<p:panel header="Consultas" id="consultaPanel" mode="native" style="margin:0 auto !important;">	
+				<p:toolbar>
+					<f:facet name="left">
+						<div class="toolbar-row">
+							<p:commandButton id="selectButton" type="button" value="SELECT" 
+								onclick="insertText('SELECT ');" update="form" ajax="true">
+								<p:tooltip for="selectButton" escape="false">
+							        <div>
+							            <strong>SELECT</strong><br/>
+							            Se utiliza para indicar las columnas de la tabla que ser&#225;n parte del resultado de la consulta.<br/>
+							            <br/>
+							            <strong>Estructura:</strong><br/>
+							            SELECT <strong>columna1, columna2, ..., columnaN</strong><br/>
+							            FROM <strong>tabla</strong>;<br/>
+							            Reemplazar "<strong>columna1, columna2, ..., columnaN</strong>" y "<strong>tabla</strong>"
+							            por nombre de las columnas a consultar o "<strong>*</strong>" (asterisco)<br/>para todas las columnas de una tabla en espec&#237;fico.<br/>
+							            <br/>
+							            <strong>Ejemplo de uso utilizando la BD "empleados_sv":</strong><br/>
+							            SELECT *<br/>
+							            FROM trabajador;					            						            
+							        </div>
+							    </p:tooltip>
+							</p:commandButton>		
+									
+								
+							<p:commandButton id="fromButton" type="button" value="FROM"
+								onclick="insertText('FROM ');" update="form" ajax="true">
+								<p:tooltip for="fromButton" escape="false">
+							        <div>
+							            <strong>FROM</strong><br/>
+							            Especifica las tablas o subconsultas que se utiliz&#225;n en la consulta.<br/>
+							            <br/>
+							            <strong>Estructura:</strong><br/>
+							            SELECT <strong>columna1, columna2, ..., columnaN</strong><br/>
+							            FROM <strong>tabla</strong>;<br/>
+							            Reemplazar "<strong>columna1, columna2, ..., columnaN</strong>" y "<strong>tabla</strong>"
+							            por nombre de las columnas a consultar o "<strong>*</strong>" (asterisco)<br/> para todas las columnas de una tabla en espec&#237;fico.<br/>
+							            <br/>
+							            <strong>Ejemplo de uso utilizando la BD "empleados_sv":</strong><br/>
+							            SELECT id_trabajador, nom_trabajador<br/>
+							            FROM trabajador;				            						            
+							        </div>
+							    </p:tooltip>
+							</p:commandButton>	
+								
+							<p:commandButton id="whereButton" type="button" value="WHERE"
+								onclick="insertText('WHERE ');" update="form" ajax="true">
+								<p:tooltip for="whereButton" escape="false">
+							        <div>
+							            <strong>WHERE</strong><br/>
+							            Se utiliza para filtrar las filas de una tabla o vista bas&#225;ndose en una condici&#243;n espec&#237;fica.<br/>
+							            La condici&#243;n puede ser una expresi&#243;n l&#243;gica que involucre operadores de comparaci&#243;n como "=", "&#60;", "&#62;", "&#60;=", "&#62;=", "&#60;&#62;" <br/>
+							            y operadores l&#243;gicos como "AND", "OR", "NOT".<br/>
+							            <br/>
+							            <strong>Estructura:</strong><br/>
+							            SELECT <strong>columna1, columna2, ..., columnaN</strong><br/>
+							            FROM <strong>tabla</strong><br/>
+							            WHERE <strong>condiciones</strong>;<br/>
+							            Reemplazar "<strong>columna1, columna2, ..., columnaN</strong>", "<strong>tabla</strong>" y "<strong>condiciones</strong>" 
+							            por columnas a consultar de una tabla en <br/>espec&#237;fico junto a las condiciones para filtrar los datos de estas.<br/>
+							            <br/>
+							            <strong>Ejemplo de uso utilizando la BD "empleados_sv", cosultando trabajadores que tengan una tarifa mayor a 100:</strong><br/>
+							            SELECT nom_trabajador, tarifa_sem<br/>
+							            FROM trabajador<br/>
+							            WHERE tarifa_sem > 100;					            						            
+							        </div>
+							    </p:tooltip>
+							</p:commandButton>
+								
+							<p:commandButton id="distinctButton" type="button" value="DISTINCT"
+								onclick="insertText('DISTINCT ');" update="form" ajax="true">
+								<p:tooltip for="distinctButton" escape="false">
+							        <div>
+							            <strong>DISTINCT</strong><br/>
+							            Hace que la consulta omita los resultados duplicados de una columna.<br/>
+							            <br/>
+							            <strong>Estructura:</strong><br/>
+							            SELECT DISTINCT <strong>columna1, columna2, ..., columnaN</strong><br/>
+							            FROM <strong>tabla</strong>;<br/>
+							            Reemplazar "<strong>columna1, columna2, ..., columnaN</strong>" y "<strong>tabla</strong>" 
+							            por nombre de las columnas a consultar o "<strong>*</strong>" (asterisco)<br/> para todas las columnas de una tabla en espec&#237;fico.<br/>
+							            <br/>
+							            <strong>Ejemplo de uso utilizando la BD "empleados_sv", donde se consulta los oficios existentes en la tabla trabajador:</strong><br/>
+							            SELECT DISTINCT oficio<br/>
+							            FROM trabajador;				            						            
+							        </div>
+							    </p:tooltip>
+							</p:commandButton>
+								
+							<p:commandButton id="orderButton" type="button" value="ORDER BY"
+								onclick="insertText('ORDER BY ');" update="form" ajax="true">
+								<p:tooltip for="orderButton" escape="false">
+							        <div>
+							            <strong>ORDER BY</strong><br/>
+							            Ordena el resultado de una consulta, por una o m&#225;s columnas especific&#225;s. El orden puede ser de forma ascendente o descendente.<br/>
+							            <br/>
+							            <strong>Estructura:</strong><br/>
+							            SELECT <strong>columna1, columna2, ..., columnaN</strong><br/>
+							            FROM <strong>tabla</strong><br/>
+							            ORDER BY <strong>columna1</strong>;<br/>
+							            Reemplazar "<strong>columna1, columna2, ..., columnaN</strong>", "<strong>tabla</strong>" y "<strong>columna1 ASC/DESC</strong>" 
+							            por la o las columnas de una tabla y la columna<br/>a ordenar con un orden especifico.<br/>
+							            <br/>
+							            <strong>Ejemplo de uso utilizando la BD "empleados_sv", donde se consultan las tarifas de trabajadores en orden ascendente:</strong><br/>
+							            <strong>SELECT nom_trabajador, tarifa_sem</strong><br/>
+							            FROM trabajador<br/>
+							            ORDER BY tarifa_sem ASC;				            						            
+							        </div>
+							    </p:tooltip>
+							</p:commandButton>
+								
+							<p:commandButton id="innerjoinButton" type="button" value="INNER JOIN"
+								onclick="insertText('INNER JOIN ');" update="form" ajax="true">
+								<p:tooltip for="innerjoinButton" escape="false">
+							        <div>
+							            <strong>INNER JOIN</strong><br/>
+							            Utilizada para combinar tuplas de dos o m&#225;s tablas en funci&#243;n de una condici&#243;n de igualdad entre columnas relacionadas.<br/> 
+							            La condici&#243;n dentro de la clausula ON puede ser una expresi&#243;n l&#243;gica que involucre operadores de comparaci&#243;n <br/>
+							            como "=", "&#60;", "&#62;", "&#60;=", "&#62;=", "&#60;&#62;" y operadores l&#243;gicos como "AND" y "OR".<br/>
+							            <br/>
+							            <strong>Estructura:</strong><br/>
+							            SELECT <strong>columna1, columna2, ..., columnaN</strong><br/>
+							            FROM <strong>tabla</strong> INNER <br/>
+							            JOIN <strong>tabla2</strong> ON <strong>condiciones</strong>;<br/>
+							            Reemplazar "<strong>columna1, columna2, ..., columnaN</strong>", "<strong>tabla</strong>", "<strong>tabla2</strong>" y "<strong>condiciones</strong>" 
+							            por la o las columnas de una tabla<br/> y otra tabla con una o mas condiciones a combinar.<br/>
+							            <br/>
+							            <strong>Ejemplo de uso utilizando la BD "empleados_sv":</strong><br/>
+							            SELECT *<br/>
+							            FROM trabajador INNER <br/>
+							            JOIN asignacion ON trabajador.id_trabajador = asignacion.id_trabajador1;	            						            
+							        </div>
+							    </p:tooltip>
+							</p:commandButton>
+								
+							<p:commandButton id="leftjoinButton" type="button" value="LEFT JOIN"
+								onclick="insertText('LEFT JOIN ');" update="form" ajax="true">
+								<p:tooltip for="leftjoinButton" escape="false">
+							        <div>
+							            <strong>LEFT JOIN</strong><br/>
+							            Se utiliza para combinar tuplas de dos o m&#225;s tablas en funci&#243;n de una condici&#243;n, devolviendo todas las tuplas de la tabla<br/> 
+							            de la izquierda y las tuplas coincidentes de la tabla de la derecha.<br/>
+							            La condici&#243;n dentro de la clausula ON puedeser una expresi&#243;n l&#243;gica que involucre operadores de comparaci&#243;n<br/>
+							            como "=", "&#60;", "&#62;", "&#60;=", "&#62;=", "&#60;&#62;" y operadores l&#243;gicos como "AND" y "OR".<br/>
+							            <br/>
+							            <strong>Estructura:</strong><br/>
+							            SELECT <strong>columna1, columna2, ..., columnaN</strong><br/>
+							            FROM <strong>tabla</strong> LEFT<br/>
+							            JOIN <strong>tabla2</strong> ON <strong>condiciones</strong>;<br/>
+							            Reemplazar "<strong>columna1, columna2, ..., columnaN</strong>", "<strong>tabla</strong>", "<strong>tabla2</strong>" y "<strong>condiciones</strong>" 
+							            por la o las columnas de una tabla<br/> y otra tabla con una o mas condiciones a combinar.<br/>
+							            <br/>
+							            <strong>Ejemplo de uso utilizando la BD "empleados_sv":</strong><br/>
+							            SELECT *<br/>
+							            FROM trabajador LEFT <br/>
+							            JOIN asignacion ON trabajador.id_trabajador = asignacion.id_trabajador1;	            						            
+							        </div>
+							    </p:tooltip>
+							</p:commandButton>
+								
+							<p:commandButton id="rightjoinButton" type="button" title="rightJoin" value="RIGHT JOIN"
+								onclick="insertText('RIGHT JOIN ');" update="form" ajax="true">
+								<p:tooltip for="rightjoinButton" escape="false">
+							        <div>
+							            <strong>RIGHT JOIN</strong><br/>
+							            Se utiliza para combinar tuplas de dos o m&#225;s tablas en funci&#243;n de una condici&#243;n, devolviendo todas las tuplas de la tabla <br/> 
+							            de la derecha y las tuplas coincidentes de la tabla de la izquierda. <br/>
+							            La condici&#243;n dentro de la clausula ON puede ser una expresi&#243;n l&#243;gica que involucre operadores de comparaci&#243;n<br/>
+							            como "=", "&#60;", "&#62;", "&#60;=", "&#62;=", "&#60;&#62;" y operadores l&#243;gicos como "AND" y "OR".<br/>
+							            <br/>
+							            <strong>Estructura:</strong><br/>
+							            SELECT <strong>columna1, columna2, ..., columnaN</strong><br/>
+							            FROM <strong>tabla</strong> RIGHT<br/>
+							            JOIN <strong>tabla2</strong> ON <strong>condiciones</strong>;<br/>
+							            Reemplazar "<strong>columna1, columna2, ..., columnaN</strong>", "<strong>tabla</strong>", "<strong>tabla2</strong>" y "<strong>condiciones</strong>"
+							            por la o las columnas de una tabla<br/> y otra tabla con una o mas condiciones a combinar.<br/>
+							            <br/>
+							            <strong>Ejemplo de uso utilizando la BD "empleados_sv":</strong><br/>
+							            SELECT *<br/>
+							            FROM trabajador RIGHT<br/>
+							            JOIN asignacion ON trabajador.id_trabajador = asignacion.id_trabajador1;            						            
+							        </div>
+							    </p:tooltip>
+							</p:commandButton>
+																
+							<p:commandButton id="fulljoinButton" type="button" title="fullJoin" value="FULL JOIN"
+								onclick="insertText('FULL JOIN ');" update="form" ajax="true">
+								<p:tooltip for="fulljoinButton" escape="false">
+							        <div>
+							            <strong>FULL JOIN</strong><br/>
+							            Se utiliza para combinar tuplas de dos o m&#225;s tablas en funci&#243;n de una condici&#243;n, incluyendo las tuplas que no coinciden en ambas tablas.<br/> 
+							            La condici&#243;n dentro de la clausula ON puede ser una expresi&#243;n l&#243;gica que involucre operadores de comparaci&#243;n como "=", "&#60;",
+							            "&#62;", "&#60;=",<br/> "&#62;=", "&#60;&#62;" y operadores l&#243;gicos como "AND" y "OR".<br/>
+							            <br/>
+							            <strong>Estructura:</strong><br/>
+							            SELECT <strong>columna1, columna2, ..., columnaN</strong><br/>
+							            FROM <strong>tabla</strong> FULL<br/>
+							            JOIN <strong>tabla2</strong> ON <strong>condiciones</strong>;<br/>
+							            Reemplazar "<strong>columna1, columna2, ..., columnaN</strong>", "<strong>tabla</strong>", "<strong>tabla2</strong>" y "<strong>condiciones</strong>" 
+							            por la o las columnas de una tabla y otra tabla con<br/> una o mas condiciones a combinar.<br/>
+							            <br/>
+							            <strong>Ejemplo de uso utilizando la BD "empleados_sv":</strong><br/>
+							            SELECT *<br/>
+							            FROM trabajador FULL<br/>
+							            JOIN asignacion ON trabajador.id_trabajador = asignacion.id_trabajador1;	            						            
+							        </div>
+							    </p:tooltip>
+							</p:commandButton>
+																
+						</div>
+        				<div class="toolbar-row">	
+							<p:commandButton id="groupButton" type="button" title="Groupby" value="GROUP BY"
+								onclick="insertText('GROUP BY ');" update="form" ajax="true">
+								<p:tooltip for="groupButton" escape="false">
+							        <div>
+							            <strong>GROUP BY</strong><br/>
+							            Se utiliza para agrupar tuplas en funci&#243;n de un campo y aplicar funciones de agregaci&#243;n al grupo resultante.<br/>
+							            Funciones de agregaci&#243;n  disponibles SUM, AVG, COUNT, MAX, MIN.<br/>
+							            <br/>
+							            <strong>Estructura:</strong><br/>
+							            SELECT <strong>agregacion(columna1), columna2, ..., columnaN</strong><br/>
+							            FROM <strong>tabla</strong><br/>
+							            GROUP BY <strong>columna1</strong>;<br/>
+							            Reemplazar "<strong>agregacion(columna1), columna2, ..., columnaN</strong>", "<strong>tabla</strong>" y "<strong>columna1</strong>" 
+							            por la o las columnas con una<br/> funcion de agregaci&#243;n, de una tabla y la columna a agrupar.<br/>
+							            <br/>
+							            <strong>Ejemplo de uso utilizando la BD "empleados_sv", donde se consulta el total de tarifa por oficio de los trabajdores:</strong><br/>
+							            SELECT oficio, SUM(tarifa_sem)<br/>
+							            FROM trabajador<br/>
+							            GROUP BY oficio;				            						            
+							        </div>
+							    </p:tooltip>
+							</p:commandButton>
+								
+							<p:commandButton id="havingButton" type="button" title="Having" value="HAVING"
+								onclick="insertText('HAVING ');" update="form" ajax="true">
+								<p:tooltip for="havingButton" escape="false">
+							        <div>
+							            <strong>HAVING</strong><br/>
+							            Se utiliza junto con la cl&#225;usula GROUP BY para filtrar el resultado de una consulta que involucra funciones de agregaci&#243;n.<br/>
+							            La condici&#243;n de agregaci&#243;n puede ser cualquier expresi&#243;n que utilice las funciones de agregaci&#243;n, operadores l&#243;gicos y de comparaci&#243;n.<br/>
+							            <br/>
+							            <strong>Estructura:</strong><br/>
+							            SELECT <strong>agregacion(columna1), columna2, ..., columnaN</strong><br/>
+							            FROM <strong>tabla</strong><br/>
+							            GROUP BY <strong>columna1</strong><br/>
+							            HAVING <strong>condiciones</strong>;<br/>
+							            Reemplazar "<strong>agregacion(columna1), columna2, ..., columnaN</strong>", "<strong>tabla</strong>" y "<strong>columna1</strong>" 
+							            por la o las columnas con una funci&#243;n de<br/> agregaci&#243;n, de una tabla, la o las columnas a agrupar y su condici&#243;n de agregaci&#243;n.<br/>
+							            <br/>
+							            <strong>Ejemplo de uso utilizando la BD "empleados_sv", donde se consulta el total mayor a 200 de tarifa por oficio de los trabajdores:</strong><br/>
+							            SELECT oficio, SUM(tarifa_sem)<br/>
+							            FROM trabajador<br/>
+							            GROUP BY oficio;<br/>
+							            HAVING SUM(tarifa_sem) > 200;				            						            
+							        </div>
+							    </p:tooltip>
+							</p:commandButton>
+									
+							<p:commandButton id="countButton" type="button" title="Count" value="COUNT"
+								onclick="insertText2('COUNT()');" update="form" ajax="true">
+								<p:tooltip for="countButton" escape="false">
+							        <div>
+							            <strong>COUNT</strong><br/>
+							            Esta Funci&#243;n calcula el n&#250;mero de filas en una tabla o el n&#250;mero de valores no nulos en una columna.<br/>
+							            <br/>
+							            <strong>Estructura:</strong><br/>
+							            SELECT <strong>COUNT(columna1), columna2, ..., columnaN</strong><br/>
+							            FROM <strong>tabla</strong>;<br/>
+							            Reemplazar "<strong>COUNT(columna1), columna2, ..., columnaN</strong>" y "<strong>tabla</strong>" 
+							            por columna m&#225;s la funcion de<br/> agregaci&#243;n para aplicar a una tabla.<br/>
+							            <br/>
+							            <strong>Ejemplo de uso utilizando la BD "empleados_sv", donde se consulta el n&#233;mero total de trabajadores:</strong><br/>
+							            SELECT COUNT(*) AS total_trabajadores<br/>
+							            FROM trabajador;					            						            
+							        </div>
+							    </p:tooltip>
+							</p:commandButton>	
+								
+							<p:commandButton id="sumButton" type="button" title="Sum" value="SUM"
+								onclick="insertText2('SUM()');" update="form" ajax="true">
+								<p:tooltip for="sumButton" escape="false">
+							        <div>
+							            <strong>SUM</strong><br/>
+							            Esta funci&#243;n se utiliza para calcular la suma de los valores en una columna num&#233;rica.<br/>
+							            <br/>
+							            <strong>Estructura:</strong><br/>
+							            SELECT <strong>SUM(columna1), columna2, ..., columnaN</strong><br/>
+							            FROM <strong>tabla</strong>;<br/>
+							            Reemplazar "<strong>SUM(columna1), columna2, ..., columnaN</strong>" y "<strong>tabla</strong>" 
+							            por columna m&#225;s la funcion de agregaci&#243;n para aplicar<br/> a una tabla.<br/>
+							            <br/>
+							            <strong>Ejemplo de uso utilizando la BD "empleados_sv", donde se consulta el total de tarifa de todos los trabajadores juntos:</strong><br/>
+							            SELECT SUM(tarifa_sem) AS total_tarifa<br/>
+							            FROM trabajador;				            						            
+							        </div>
+							    </p:tooltip>
+							</p:commandButton>
+								
+							<p:commandButton id="avgButton" type="button" title="Average" value="AVG"
+								onclick="insertText2('AVG()');" update="form" ajax="true">
+								<p:tooltip for="avgButton" escape="false">
+							        <div>
+							            <strong>AVERAGE</strong><br/>
+							            Esta funci&#243;n se utiliza para calcular el promedio de los valores en una columna num&#233;rica.<br/>
+							            <br/>
+							            <strong>Estructura:</strong><br/>
+							            SELECT <strong>AVG(columna1), columna2, ..., columnaN</strong><br/>
+							            FROM <strong>tabla</strong>;<br/>
+							            Reemplazar "<strong>AVG(columna1), columna2, ..., columnaN</strong>" y "<strong>tabla</strong>" 
+							            por columna m&#225;s la funcion de agregaci&#243;n para aplicar<br/> a una tabla.<br/>
+							            <br/>
+							            <strong>Ejemplo de uso utilizando la BD "empleados_sv", donde se consulta el promedio de tarifa de todos los trabajadores:</strong><br/>
+							            SELECT AVG(tarifa_sem) AS promedio_tarifa<br/>
+							            FROM trabajador;					            						            
+							        </div>
+							    </p:tooltip>
+							</p:commandButton>
+								
+							<p:commandButton id="maxButton" type="button" title="Max" value="MAX"
+								onclick="insertText2('MAX()');" update="form" ajax="true">
+								<p:tooltip for="maxButton" escape="false">
+							        <div>
+							            <strong>MAX</strong><br/>
+							            Esta funci&#243;n devuelve el valor m&#225;ximo de una columna.<br/>
+							            <br/>
+							            <strong>Estructura:</strong><br/>
+							            SELECT <strong>MAX(columna1), columna2, ..., columnaN</strong><br/>
+							            FROM <strong>tabla</strong>;<br/>
+							            Reemplazar "<strong>MAX(columna1), columna2, ..., columnaN</strong>" y "<strong>tabla</strong>" 
+							            por columna m&#225;s la<br/> funcion de agregaci&#243;n para aplicar a una tabla.<br/>
+							            <br/>
+							            <strong>Ejemplo de uso utilizando la BD "empleados_sv", donde se consulta la tarifa m&#225;s alta:</strong><br/>
+							            SELECT MAX(tarifa_sem) AS tarifa_max<br/>
+							            FROM trabajador;					            						            
+							        </div>
+							    </p:tooltip>
+							</p:commandButton>
+								
+							<p:commandButton id="minButton" type="button" title="Min" value="MIN"
+								onclick="insertText2('MIN()');" update="form" ajax="true">
+								<p:tooltip for="minButton" escape="false">
+							        <div>
+							            <strong>MIN</strong><br/>
+							            Esta funci&#243;n devuelve el valor m&#237;nimo de una columna.<br/>
+							            <br/>
+							            <strong>Estructura:</strong><br/>
+							            SELECT <strong>MIN(columna1), columna2, ..., columnaN</strong><br/>
+							            FROM <strong>tabla</strong>;<br/>
+							            Reemplazar "<strong>MIN(columna1), columna2, ..., columnaN</strong>" y "<strong>tabla</strong>" 
+							            por columna m&#225;s la<br/> funcion de agregaci&#243;n para aplicar a una tabla.<br/>
+							            <br/>
+							            <strong>Ejemplo de uso utilizando la BD "empleados_sv", donde se consulta la tarifa m&#225;s baja:</strong><br/>
+							            SELECT MIN(tarifa_sem) AS tarifa_min<br/>
+							            FROM trabajador;					            						            
+							        </div>
+							    </p:tooltip>
+							</p:commandButton>
+							
+						</div>
+									
+					</f:facet>
+				</p:toolbar>
+				
+					<h:panelGrid columns="2" style="width:100%; position: relative;">
+					    <p:inputTextarea rows="5" style="width:90%; resize: none;" id="query" value="#{dtGestionarEjerciciosBeanSQL.query}" onkeypress="handleKeyPress(event)" />
+					    <p:commandButton id="ejecutar" type="submit" title="Ejecutar" value="Ejecutar" ajax="true" 
+					        action="#{dtGestionarEjerciciosBeanSQL.ejecutar}" icon="ui-icon-check" update="form :formDataList"
+					        style="position: absolute; top: 0; right: 0; margin-top: 10px; margin-right: 10px;" /> 	
+					</h:panelGrid>
+					
+					<p:spacer/>
+					
+					
+					
+					
+					<p:fieldset legend="Resultado" style="height: 225px; overflow: auto;">
+					    <h:panelGroup rendered="#{not empty dtGestionarEjerciciosBeanSQL.errorMessage}">
+					        <p:panel id="errorPanel" style="border: none; background: none; height: 100%;">
+					            <p:outputLabel value="#{dtGestionarEjerciciosBeanSQL.errorMessage}" escape="false"
+					                style="color: red; background-color: #ffdddd; padding: 10px; border: 1px solid #ff0000; display: inline-block; height: 100%; width: 100%;">
+					                <p:tooltip for="errorPanel" value="Error" showEffect="fade" hideEffect="fade" />
+					            </p:outputLabel>
+					        </p:panel>
+					    </h:panelGroup>
+					
+					    <h:panelGroup rendered="#{empty dtGestionarEjerciciosBeanSQL.errorMessage}" style="height: 100%;">
+					        <div style="height: 100%;">
+					            <p:dataTable value="#{dtGestionarEjerciciosBeanSQL.data}" var="item" style="width:100%!important;"
+					                emptyMessage="#{dtGestionarEjerciciosBeanSQL.primerCarga ? 'Ingrese su consulta en SQL' : 'La relaci&#243;n est&#225; vac&#237;a'}">
+					                <f:facet name="header">
+					                    <h:outputText value="#{dtGestionarEjerciciosBeanSQL.tableName}" />
+					                </f:facet>
+					                <p:columns value="#{dtGestionarEjerciciosBeanSQL.columnNames}" var="columnName" columnIndexVar="i">
+					                    <f:facet name="header">
+					                        <h:outputText value="#{columnName}" />
+					                    </f:facet>
+					                    <h:outputText value="#{item[i] != null ? item[i] : 'Nulo'}" />
+					                </p:columns>
+					            </p:dataTable>
+					        </div>
+					    </h:panelGroup>
+					</p:fieldset>
+
+					<h:panelGrid columns="1" style="width:100%; position: relative;">
+					    <p:commandButton value="Limpiar Resultado" action="#{dtGestionarEjerciciosBeanSQL.limpiarResultados}"
+					        icon="ui-icon-trash" update="form :formDataList" style="float: right;">
+					    </p:commandButton>
+					</h:panelGrid>
+			
+				
+				<p:spacer/> 
+				
+				
+							
+				<p:fieldset legend="Historial">				
+					<p:scrollPanel mode="native" style="height:200px" styleClass="divs">		
+						<p:inputTextarea rows="10" style="width:98%" id="grupoConsultas" disabled="false" value="#{dtGestionarEjerciciosBeanSQL.queryList}"/>				
+					</p:scrollPanel>
+					<div style="float: right; font-style: italic;"
+						>El Historial tambi&#233;n funciona como borrador, su contenido es editable.</div>											
+				</p:fieldset>
+
+				</p:panel>
+				
+				<script>
+					function insertText(text) {
+					    var queryTextArea = document.getElementById("form:query");
+					    var start = queryTextArea.selectionStart;
+					    var end = queryTextArea.selectionEnd;
+					    var currentValue = queryTextArea.value;
+					    var newValue = currentValue.substring(0, start) + text + currentValue.substring(end);				    
+					    queryTextArea.value = newValue;
+					    
+					    queryTextArea.selectionStart = start + text.length;
+					    queryTextArea.selectionEnd = start + text.length;
+					    queryTextArea.focus();
+					}
+					
+					function insertText2(text) {
+					    var queryTextArea = document.getElementById("form:query");
+					    var start = queryTextArea.selectionStart;
+					    var end = queryTextArea.selectionEnd;
+
+					    var currentValue = queryTextArea.value;
+					    var newValue = currentValue.substring(0, start) + text + currentValue.substring(end);
+					    
+					    queryTextArea.value = newValue;
+					    
+					    var newCursorPosition = start + text.length - 1;
+					    queryTextArea.setSelectionRange(newCursorPosition, newCursorPosition);
+					    queryTextArea.focus();
+					}
+					
+					function handleKeyPress(event) {
+					    if (event.keyCode === 13) { 
+					        event.preventDefault();
+					        
+					        var queryTextArea = document.getElementById("form:query");
+					        var start = queryTextArea.selectionStart;
+					        var end = queryTextArea.selectionEnd;
+					        
+					        var currentValue = queryTextArea.value;
+					        var newValue = currentValue.substring(0, start) + "\n" + currentValue.substring(end);
+					        
+					        queryTextArea.value = newValue;
+					        
+					        var newCursorPosition = start + 1;
+					        queryTextArea.setSelectionRange(newCursorPosition, newCursorPosition);
+					        queryTextArea.focus();
+					    }
+					}
+				</script>
+				
+				
+				</p:fieldset>
+			
+			</h:form>
+					
+		</ui:define>
+	</ui:composition>
+
+</h:body>
+</html>

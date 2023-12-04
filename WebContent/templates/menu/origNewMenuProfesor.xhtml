@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:body id="menuProfesor">
+	<h:form prependId="false" id="formMenuProfesor">    
+
+		<aside class="main-sidebar">
+	    	<!-- sidebar: style can be found in sidebar.less -->
+	        <section class="sidebar">
+	          	<!-- Sidebar user panel -->
+	          	<div class="user-panel">
+	            	<div class="pull-left image">
+					    <h:graphicImage value="#{resource['img/teacher37.png']}" styleClass="img-circle user-image"/>
+	            	</div>
+	            	<div class="pull-left info">
+	              		<p>
+	              			<h:outputText value="#{usuario.nombre1} #{usuario.paterno}"/>
+	              		</p>
+	              		<a>
+	              			<i class="fa fa-circle text-success" />
+	              			<h:outputText value="#{usuario.tipo == 1 ? 'Profesor' : 'Alumno'}" />	
+	              		</a>
+	            	</div>
+	          	</div>
+	     		<!-- sidebar menu: : style can be found in sidebar.less -->
+	          	<ul class="sidebar-menu">
+	            	<li class="header">MENÚ</li>
+	            	<li class="treeview">
+	              		<a href="#">
+	                		<i class="fa fa-users"></i> 
+	               			<span>Gestionar Usuarios</span> 
+	               			<i class="fa fa-angle-left pull-right"></i>
+	              		</a>
+			          	<ul class="treeview-menu">
+							<li><a href="crearCuenta.xhtml"><i class="fa fa-circle-o"></i> Crear Cuenta </a></li>
+			                <li><a href="eliminarCuenta.xhtml"><i class="fa fa-circle-o"></i> Eliminar Cuenta </a></li>
+			                <li><a href="modificarCuenta.xhtml"><i class="fa fa-circle-o"></i> Modificar Cuenta</a></li>
+			            </ul>
+	            	</li>
+	            	<li class="treeview">
+	              		<a href="#">
+	                		<i class="fa fa-archive"></i>
+	                		<span>Gestionar BD</span>
+	          		      <i class="fa fa-angle-left pull-right"></i>
+	            	  	</a>
+	            	  	<ul class="treeview-menu">
+	                		<li><a href="crearBD.xhtml"><i class="fa fa-circle-o"></i> Crear BD </a></li>
+	                		<li><a href="eliminarBD.xhtml"><i class="fa fa-circle-o"></i> Eliminar BD </a></li>
+	                		<li><a href="modificarBD.xhtml"><i class="fa fa-circle-o"></i> Modificar BD </a></li>
+	                		<li><a href="cargarBD.xhtml"><i class="fa fa-circle-o"></i> Cargar BD </a></li>
+	              		</ul>
+	            	</li>
+	            	<li class="treeview">
+		            	<a href="#">
+		                	<i class="fa fa-table"></i>
+		                	<span>Gestionar Relaciones</span>
+			                <i class="fa fa-angle-left pull-right"></i>
+			            </a>
+		              	<ul class="treeview-menu">
+		                	<li><a href="crearRelacion.xhtml"><i class="fa fa-circle-o"></i> Crear Relación </a></li>
+				            <li><a href="eliminarRelacion.xhtml"><i class="fa fa-circle-o"></i> Eliminar Relación </a></li>
+				            <li><a href="modificarRelacion.xhtml"><i class="fa fa-circle-o"></i> Modificar Relación </a></li>
+				            <li><a href="verRelacion.xhtml"><i class="fa fa-circle-o"></i> Gestionar Tupla </a></li>
+		              	</ul>
+		            </li>
+		            <li class="treeview">
+			            <a href="#">
+			               	<i class="fa fa-pencil-square-o"></i>
+			               	<span>Gestionar Ejercicios</span>
+			               	<i class="fa fa-angle-left pull-right"></i>
+			            </a>
+		              	<ul class="treeview-menu">
+		                	<li><a href="gestionarEjercicio.xhtml"><i class="fa fa-circle-o"></i> Gestionar Ejercicios </a></li>
+		                	<li><a href="responderEjercicio.xhtml"><i class="fa fa-circle-o"></i> Responder Ejercicios </a></li>
+		              	</ul>
+		            </li>
+		            <li>
+		              	<a href="hacerConsulta.xhtml">
+		                	<i class="fa fa-terminal"></i> <span>Hacer Consulta</span>
+		              	</a>
+		            </li>
+	            	<li>
+	              		<a href="verEstadisticas.xhtml">
+	                		<i class="fa fa-bar-chart-o"></i> <span>Ver Estadísticas</span>
+	              		</a>
+	            	</li>        
+	           	</ul>
+	   		</section>
+	        <!-- /.sidebar -->
+		</aside>
+
+    </h:form>
+</h:body>
+
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:body>
+
+	<f:metadata>
+		<f:event listener="#{newLoginBean.loadBD}" type="preRenderView" />
+	</f:metadata>
+	
+	<ui:composition template="/templates/consultaTemplate.xhtml">
+		<ui:define name="title">Algebra Relacional - UV</ui:define>
+		<ui:define name="content">
+			
+			<h:form>			
+				<p:panel styleClass="divs">
+					<h:panelGrid columns="3" cellpadding="5">
+						<h:commandLink value="Inicio" styleClass="linkTitulo" action="home"/>
+						>
+						<h:outputText value="Obtener Revisión" styleClass="tituloPagina"/>
+					</h:panelGrid>
+				</p:panel>
+			</h:form>
+			
+			<p:spacer/>
+				
+			<h:form id="form" onkeypress="if (event.keyCode == 13) {return false; }">
+				<p:growl id="growl" showDetail="false"/>
+				
+				<p:dialog id="help" widgetVar="dlg" header="Ayuda" resizable="false" showEffect="fade" hideEffect="fade">
+					<p:fieldset legend="Obtener Revisión" style="font-weight: bold;" >
+						<h2/>
+						1. En la sección <h:outputText value="Resultados por Ejercicio" style="color:#e69700"/> se puede revisar el resultado de cada ejercicio <p/>
+						2. Seleccione el botón <p:commandButton value="Ver Tu Respuesta" icon="ui-icon-zoomin" readonly="true" /> para ver la Relación Resultante que enviaste para el Ejercicio seleccionado <p/>
+						3. Seleccione el botón <p:commandButton value="Ver Respuesta Esperada" icon="ui-icon-zoomin" readonly="true" /> para ver la Respuesta Esperada del Ejercicio seleccionado <p/>
+						4. En la sección <h:outputText value="Resultados Globales" style="color:#e69700"/> se puede revisar los resultados globales de todos los ejercicios que enviaste <p/>
+						5. Seleccione el botón <p:commandButton value="Inicio" icon="ui-icon-home" readonly="true" /> para volver al inicio <p/>
+						<h2/>
+					</p:fieldset>
+			    </p:dialog>  
+			    
+				<p:fieldset styleClass="divs">
+				<f:facet name="legend">
+					<h:panelGrid columns="2" cellpadding="5">
+						<h:outputText value="Obtener Revisión" />
+						<h:outputLink value="javascript:void(0)" onclick="PF('dlg').show();" >
+							<span class="ui-icon ui-icon-help" />
+						</h:outputLink>
+					</h:panelGrid>
+				</f:facet>
+			
+				<p:spacer/>
+			
+				<p:panel header="Resultados por Ejercicio">
+				<p:tabView id="radioDT" value="#{usuario.ejercicios}" var="ejercicio">
+				        <p:tab title="Ejercicio #{ejercicio.id + 1}">
+				            <h:panelGrid columns="2" cellpadding="5">
+				                               
+				                <h:outputText value="Pregunta: "  style="font-weight: bold"/>
+          						<h:outputText value="#{ejercicio.pregunta}" required="true" label="text"/>			              
+          							
+          						<h:outputText value="Consultas Esperadas: " style="font-weight: bold"/>  
+				                <h:outputText value="#{ejercicio.consultas}" required="true" label="text"/>        				        						
+				                
+				                <h:outputText value="Resultado: " style="font-weight: bold;" rendered="#{ejercicio.resultado}"/>  
+				                <h:outputText value="#{ejercicio.resultado ? 'Correcto' : 'Incorrecto'}" required="true" label="text"
+				                	style="color:#0000FF;" rendered="#{ejercicio.resultado}"/>
+								
+								<h:outputText value="Resultado: " style="font-weight: bold;" rendered="#{!ejercicio.resultado}"/>  
+				                <h:outputText value="#{ejercicio.resultado ? 'Correcto' : 'Incorrecto'}" required="true" label="text"
+				                	style="color:#FF0000;" rendered="#{!ejercicio.resultado}"/>
+				                	
+				                <p:commandButton value="Ver Tu Respuesta" process="radioDT" icon="ui-icon-zoomin" oncomplete="PF('queryDialog').show()" 
+				                	title="Ver Tu Respuesta" update="@form" ajax="true" action="#{dtObtenerCalificacionBean.verRespuesta}" >           					
+                					<f:setPropertyActionListener value="#{ejercicio}" target="#{dtObtenerCalificacionBean.selectedEjercicio}" />
+            					</p:commandButton>     
+				                <p:commandButton value="Ver Respuesta Esperada" process="radioDT" icon="ui-icon-zoomin" oncomplete="PF('queryDialog').show()" 
+				                	title="Ver Respuesta Esperada" update="@form" ajax="true" action="#{dtObtenerCalificacionBean.verRespuestaEsperada}" >           					
+                					<f:setPropertyActionListener value="#{ejercicio}" target="#{dtObtenerCalificacionBean.selectedEjercicio}" />
+            					</p:commandButton>
+								
+							</h:panelGrid>
+						</p:tab>           
+				    </p:tabView>
+				    </p:panel>
+				    
+				   <p:spacer/>
+				    
+				    <p:panel>
+				    	<f:facet name="header">
+							<h:outputText value="Resultados Globales" />
+						</f:facet>
+					    <h:panelGrid columns="2" cellpadding="5">
+					    
+					    	<h:outputText value="Respuestas Correctas: "  style="font-weight: bold"/>
+	          				<h:outputText value="#{usuario.resultado.cantCorrectas}" required="true" label="text"/>
+					   
+					   		<h:outputText value="Respuestas Incorrectas: "  style="font-weight: bold"/>
+	          				<h:outputText value="#{usuario.resultado.cantErroneas}" required="true" label="text"/>
+	          				
+	          				<h:outputText value="Respuestas Omitidas: "  style="font-weight: bold"/>
+	          				<h:outputText value="#{usuario.resultado.cantOmitidas}" required="true" label="text"/>
+	          				
+	          				<h:outputText value="Resultado Porcentual: "  style="font-weight: bold"/>
+	          				<h:outputText value="#{(usuario.resultado.cantCorrectas*100)/usuario.resultado.cantEjercicios}%" required="true" label="text"/>
+					    
+					    </h:panelGrid>
+					</p:panel>
+				    
+				    <p:dialog header="Resultado" widgetVar="queryDialog" closable="true" modal="false" showEffect="fade" hideEffect="fade" resizable="false">
+			        <p:panel id="queryDetail" style="height:235px!important;width:970px!important">
+					<p:dataTable value="#{dtObtenerCalificacionBean.data}" var="item" scrollable="true" scrollHeight="165"
+						emptyMessage="No hay respuesta">
+	    				<p:columns value="#{dtObtenerCalificacionBean.columnNames}" var="columnName" columnIndexVar="i"> 
+	        				<f:facet name="header">
+	        					<h:outputText value="#{columnName}"/>
+	        				</f:facet>
+	        				<h:outputText value="#{item[i] != null ? item[i] : 'Nulo'}"/>
+	    				</p:columns> 
+					</p:dataTable>
+					</p:panel>			 
+		   			</p:dialog>
+		   			
+		   		<p:panel styleClass="divs">
+		   		
+		   			<h:panelGrid columns="2" cellpadding="5" style="margin: 0 auto!important">
+		   				<h:outputText value="Volver al Inicio" style="font-weight: bold;"/>
+		   				<p:commandButton icon="ui-icon-home" value="Inicio" action="home"/>	
+		   			</h:panelGrid>
+		   		
+		   		</p:panel>
+		   		</p:fieldset>
+				    
+			</h:form>
+		</ui:define>
+	</ui:composition>
+
+</h:body>
+</html>

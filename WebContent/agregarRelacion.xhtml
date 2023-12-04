@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:body>
+	
+	<f:metadata>
+		<f:event listener="#{newLoginBean.loadBD}" type="preRenderView" />
+		<f:event listener="#{newLoginBean.isMyBd}" type="preRenderView" />
+	</f:metadata>
+	
+	<ui:composition template="/templates/homeTemplate.xhtml">
+		<ui:define name="title">Algebra Relacional - UV</ui:define>
+		<ui:define name="content">
+			
+			<h:form>			
+				<p:panel styleClass="divs">
+					<h:panelGrid columns="3" cellpadding="5">
+						<h:commandLink value="Inicio" styleClass="linkTitulo" action="home"/>
+						>
+						<h:outputText value="Agregar Relación" styleClass="tituloPagina"/>
+					</h:panelGrid>
+				</p:panel>
+			</h:form>
+			
+			<p:spacer/>
+				
+			<h:form id="form" onkeypress="if (event.keyCode == 13) {return false; }">
+				<p:growl id="growl" showDetail="false"/>
+				
+				<p:dialog id="help" widgetVar="dlg" header="Ayuda" resizable="false" showEffect="fade" hideEffect="fade">
+					<p:fieldset legend="Agregar Relación" style="font-weight: bold;" >
+						<h2/>
+						1. Ingrese el Nombre y la Cantidad de Atributos de la Relación para actualizar la Tabla inferior de <h:outputText value="Atributos" style="color:#e69700"/> <p/>									
+						2. Modifique todos los atributos tabla seleccionando el botón <p:commandButton icon="ui-icon-pencil" readonly="true" /> <p/>
+						3. En la Ventana <h:outputText value="Modificar Campos" style="color:#e69700"/>, rellene el formulario y luego seleccione el botón <p:commandButton value="Aceptar" icon="ui-icon-pencil" readonly="true" /> para aceptar los cambios <p/>				
+						4. Seleccione el botón <p:commandButton value="Agregar Relación" icon="ui-icon-check" readonly="true" /> para cargar agregar la nueva Relación a la Base de Datos <p/>						
+						<h2/>
+					</p:fieldset>
+			    </p:dialog>  
+			    
+				<p:fieldset styleClass="divs">
+				<f:facet name="legend">
+					<h:panelGrid columns="2" cellpadding="5">
+						<h:outputText value="Agregar Relación" />
+						<h:outputLink value="javascript:void(0)" onclick="PF('dlg').show();" >
+							<span class="ui-icon ui-icon-help" />
+						</h:outputLink>
+					</h:panelGrid>
+				</f:facet>
+				
+				<h:panelGrid columns="2" cellpadding="5">
+					<h:outputText value="Nombre de la Relación: *" />
+					<p:inputText id="nombreRel" value="#{gestionarRelacionBean.relacion.nombre}"
+						requiredMessage="El Nombre de la Relación no debe ser vacío" required="true"
+						validatorMessage="La relación debe comenzar con una letra y sólo debe contener caracteres alfanuméricos o el guión bajo" >
+			            <f:validateRegex pattern="^[a-zA-Z][a-zA-Z0-9_]*" />
+						<p:ajax event="change" update="form" />
+						<p:watermark for="nombreRel" value="Agregar Nombre"/>	 
+					</p:inputText>
+							 
+			        <h:outputText value="Cantidad de Atributos: *" />
+			        <p:spinner id="cant" value="#{gestionarRelacionBean.cant}" min="1" max="10">
+			            <p:ajax event="change" update=":form:radioDT" />
+			        </p:spinner>
+			    </h:panelGrid>
+				
+			    <p:dataTable id="radioDT" var="atributo" value="#{gestionarRelacionBean.atributos}" widgetVar="atributosTable"
+			                 emptyMessage="Agregue la cantidad de atributos que desea">
+			        <f:facet name="header">
+						Atributos
+			        </f:facet>
+			        <p:column style="width:35px;text-align: center">
+             			<p:commandButton process="radioDT" update=":form:atributoDetail" oncomplete="PF('atributoDialog').show()" icon="ui-icon-pencil" title="Modificar">
+                			<f:setPropertyActionListener value="#{atributo}" target="#{gestionarRelacionBean.selectedAtributo}" />
+            			</p:commandButton>
+            		</p:column>		      	
+			        <p:column headerText="Nombre">
+			            <h:outputText value="#{atributo.nombre}" />
+			        </p:column>
+			        <p:column headerText="Primario">
+			            <h:outputText value="#{atributo.esPrimario}" />
+			        </p:column>
+			        <p:column headerText="Tipo">
+			            <h:outputText value="#{atributo.tipo}" />
+			        </p:column>			     
+			    </p:dataTable>
+				</p:fieldset>
+				
+			    <p:dialog header="Modificar Campos" widgetVar="atributoDialog" modal="false" showEffect="fade" hideEffect="fade" resizable="false">
+			        <p:outputPanel id="atributoDetail" style="text-align:left;">
+			            
+			            <p:fieldset>
+			            	<f:facet name="legend">
+			            	<h:panelGrid styleClass="divs" columns="2" cellpadding="10">
+				        		<span class="ui-icon ui-icon-info" />	        		
+				        		<h:outputText  value="Rellene el formulario y luego seleccione el botón Aceptar" style="font-weight: bold;"/>
+			        		</h:panelGrid>	
+			            	</f:facet>
+			            <h:panelGrid columns="2" cellpadding="5" cellspacing="2">
+			 
+			                <h:outputLabel for="nombre" value="Nombre: *" />
+					        <p:inputText value="#{gestionarRelacionBean.selectedAtributo.nombre}" id="nombre" 
+					            requiredMessage="Los campos 'Nombre' de los atributos no debe ser vacío" required="true" label="text"
+					            validatorMessage="El atributo debe comenzar con una letra y sólo debe contener caracteres alfanuméricos o el guión bajo" >
+			            		<f:validateRegex pattern="^[a-zA-Z][a-zA-Z0-9_]*" />
+					         	<p:watermark for="nombre" value="Agregar Nombre"/>	 
+					        </p:inputText>
+		                
+			                <h:outputLabel for="primario" value="Primario: *" />
+					        <p:selectOneListbox id="primario" value="#{gestionarRelacionBean.selectedAtributo.esPrimario}"
+					        	 requiredMessage="Los campos 'Primario' de los atributos no debe ser vacío" required="true">
+					            <f:selectItem itemLabel="Sí" itemValue="Sí" />
+					            <f:selectItem itemLabel="No" itemValue="No" />
+					        </p:selectOneListbox>
+					        
+					        <h:outputLabel for="tipo" value="Tipo: *" />
+					        <p:selectOneListbox id="tipo" value="#{gestionarRelacionBean.selectedAtributo.tipo}"
+					        	 requiredMessage="Los campos 'Tipo' de los atributos no debe ser vacío" required="true">
+					            <f:selectItem itemLabel="Entero" itemValue="Entero" />
+					            <f:selectItem itemLabel="Real" itemValue="Real" />
+					            <f:selectItem itemLabel="Cadena" itemValue="Cadena" />
+					        </p:selectOneListbox>
+	            			                
+			            </h:panelGrid>
+			            </p:fieldset>
+			            
+			            <h:panelGrid style="margin: 0 auto !important">
+			            	<p:commandButton update="form" icon="ui-icon-pencil" value="Aceptar" ajax="true" action="#{gestionarRelacionBean.setAtributo}" />
+			            </h:panelGrid>
+			            	
+			        </p:outputPanel>
+			       
+			    </p:dialog>
+			    		 
+			    <h:panelGrid cellpadding="5" cellspacing="10" style="margin: 0 auto !important" >
+				    <p:commandButton update="form" icon="ui-icon-check" value="Agregar Relación" 
+				    	ajax="true" action="#{gestionarRelacionBean.agregarRelacion}"/>		    
+			    </h:panelGrid>
+								
+			</h:form>
+			
+		</ui:define>
+	</ui:composition>
+
+</h:body>
+</html>

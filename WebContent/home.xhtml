@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:body>
+	
+	<ui:composition template="/templates/homeTemplate.xhtml">
+		<ui:define name="title">Algebra Relacional - UV</ui:define>
+		<ui:define name="content">
+			<h:form>			
+				<p:panel styleClass="divs">
+					<h:panelGrid columns="1" cellpadding="5">
+						<h:outputText value="Inicio" styleClass="tituloPagina"/>
+					</h:panelGrid>
+				</p:panel>
+			</h:form>
+			
+			<p:spacer/>
+			
+			<h:form onkeypress="if (event.keyCode == 13) {return false; }">
+			
+				<p:growl id="growl" showDetail="false"/>
+			
+				<p:panel styleClass="divs">
+				
+					<p:fieldset legend="Atajos">
+						
+							Para <strong>ejecutar</strong> una consulta en <strong>SQL</strong> o <strong>Álgebra Relacional</strong>, primero debe <strong>cargar</strong> una <strong>Base de Datos</strong>  <p/>					
+						
+						<h:panelGrid columns="3" cellpadding="4"  >
+							<p:commandButton value="Cargar Base de Datos" ajax="false" action="cargarBD" style="height: 60px;" />
+							<p:commandButton value="Hacer Consulta SQL" ajax="false" disabled="#{bd == null}" action="#{menuView.hacerConsultaSQL}" style="height: 60px;" />
+							<p:commandButton value="Hacer Consulta AR" ajax="false" disabled="#{bd == null}" action="#{menuView.hacerConsulta}" style="height: 60px;" />						
+						</h:panelGrid>			
+							
+					</p:fieldset>
+					
+					<p:spacer />
+					
+					<p:fieldset legend="Datos Usuario">					
+						<h:panelGrid columns="2" cellpadding="4" columnClasses="label, value" >
+						
+							<h:outputText value="Rut: " />
+							<h:outputText value="#{usuario.rut}" />
+							
+							<h:outputText value="Nombre: " />
+							<h:outputText value="#{usuario.nombre1} #{usuario.nombre2} #{usuario.paterno} #{usuario.materno}" />
+							
+							<h:outputText value="Mail: " />
+							<h:outputText value="#{usuario.mail}" />							
+						
+							<h:outputText rendered="#{usuario.tipo == 2}" value="Año de Ingreso: " />
+							<h:outputText rendered="#{usuario.tipo == 2}" value="#{usuario.anyo}" />
+						
+						</h:panelGrid>
+						
+					</p:fieldset>
+				
+					<p:spacer />
+					
+					<p:fieldset legend="Bases de Datos Creadas">
+					
+						<p:dataList value="#{homeView.basesDatos}" var="baseDato" type="ordered" emptyMessage="No hay Bases de Datos Creadas">
+					        #{baseDato.getNombre()}
+					        
+					    </p:dataList>
+					
+					</p:fieldset>
+					
+					<p:spacer/>
+					
+					<p:fieldset legend="¿Qué es GCAR?">
+						<p:panel styleClass="divs">
+							<strong>GCAR</strong> es una aplicación web ideada para la gestión de consultas en 
+							<strong>Álgebra Relacional y SQL</strong> que utiliza 
+							<a style="color:#e69700;font-weight: bold;" href="http://www.postgresql.org">PostgreSQL</a> 
+							para la Gestión de Bases de Datos. <br/>
+							Dentro de sus capacidades, <strong>GCAR</strong> es capaz de ejecutar consultas en 
+							<strong>Álgebra Relacional</strong> y <strong>SQL</strong>, generar y modificar Bases de Datos para el ingreso de consultas, 
+							crear y responder Guias de Ejercicios para cada Base de Datos y el análisis de datos generados por el uso de la aplicación, para medir el desempeño de las y los Estudiantes.<br/>
+							<strong>GCAR v2</strong> es el resultado del Trabajo de Título: <strong>"Perfeccionamiento y validación empírica de una 
+							plataforma de enseñanza-aprendizaje para Álgebra Relacional y SQL"</strong> 
+							para optar al título de <strong>Ingeniero Civil en Informática</strong> en la <strong>Universidad de 
+							Valparaíso.</strong> <p/>
+							
+							<h:panelGrid style="text-align: right;width:100%">
+								<h:outputText value="Estudiante: Sebastián Segovia (Primera Version)" style="color:#e69700;font-weight: bold;"/>
+								<h:outputText value="Estudiante: Yian Vera Soto (Segunda Version)" style="color:#e69700;font-weight: bold;"/>
+								<h:outputText value="Profesor Guía: Eliana Providel" style="color:#e69700;font-weight: bold;" />
+							</h:panelGrid>
+							
+							
+							
+						</p:panel>
+					</p:fieldset>
+
+				</p:panel>
+
+			</h:form>
+		</ui:define>
+	</ui:composition>
+
+</h:body>
+</html>

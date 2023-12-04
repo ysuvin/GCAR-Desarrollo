@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"  
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+<h:body>
+	<h:form>
+    	<p:menubar styleClass="divs" style="background:#c9c9c9!important">
+
+ 		
+    		<p:menuitem value="Consultas SQL" ajax="false" disabled="#{bd == null}" action="#{menuView.hacerConsultaSQL}" />
+   		    		    		
+    		<p:menuitem value="Consultas AR" ajax="false" disabled="#{bd == null}" action="#{menuView.hacerConsulta}" />
+
+    		<p:menuitem value="Responder Ejercicios" disabled="#{bd == null}" action="#{menuView.responderEjercicio}" ajax="false"/>
+    		
+    		<p:submenu label="Gestionar BD" ajax="false" >
+    			<p:menuitem value="Crear BD" ajax="false" action="crearBD" />
+    			<p:menuitem value="Eliminar BD" ajax="false" action ="eliminarBD" />
+    			<p:menuitem value="Modificar BD" ajax="false" action ="modificarBD" />
+    			<p:menuitem value="Cargar BD" ajax="false" action="cargarBD" />
+    		</p:submenu>
+    		
+    		<p:submenu label="Gestionar Relaciones" ajax="false" >
+    			<p:menuitem value="Agregar Relación" ajax="false" disabled="#{bd == null}" action="#{menuView.agregarRelacion}" rendered="#{usuario.rut.equals(bd.rut)}"/>
+    			<p:menuitem value="Eliminar Relación" ajax="false" disabled="#{bd == null}" action="#{menuView.eliminarRelacion}" rendered="#{usuario.rut.equals(bd.rut)}"/>
+    			<p:menuitem value="Modificar Relación" ajax="false" disabled="#{bd == null}" action="#{menuView.modificarRelacion}" rendered="#{usuario.rut.equals(bd.rut)}"/>
+    			<p:menuitem value="Gestionar Tuplas" ajax="false" disabled="#{bd == null}" action="#{menuView.verRelacion}"/>
+    		</p:submenu>
+    		
+    		<p:menuitem value="Modificar Cuenta Propia" ajax="false" action="modificarCuentaAlumno"/>
+    		
+    		<f:facet name="options">
+            	<p:commandButton value="Desconectar" icon="ui-icon-extlink" action="#{menuView.logout}" />
+        	</f:facet>
+    		
+    		
+    	</p:menubar>
+	</h:form>
+</h:body>
+
+</html>

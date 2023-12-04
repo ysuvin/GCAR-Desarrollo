@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+	
+<h:body>
+
+  		<h:form>
+  			<h:panelGrid columns="3" columnClasses="logoUV,titulo,login">
+  				
+  				<img id="logo_img" class="logo" alt="Logo UV" />
+			
+  				<p:commandLink action="home" styleClass="linkTitulo" >
+  					<h:panelGrid>
+  						<h:outputText id="titulo" value="GCAR - Gestión de Consultas en Álgebra Relacional y SQL" styleClass="tituloHeader"/>
+  					</h:panelGrid>
+  				</p:commandLink>
+  				
+				<p:spacer/>
+  				
+  			</h:panelGrid>
+   		</h:form>
+		<script>
+			document.addEventListener('DOMContentLoaded', function() {
+			    var logo = document.getElementById('logo_img');
+			
+			    logo.src = "#{resource['img:logo_uv.png']}";
+			}, false);
+		</script>
+</h:body>
+
+</html>

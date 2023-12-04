@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:body>
+
+	<f:metadata>
+		<f:event listener="#{newLoginBean.isAdmin}" type="preRenderView" />
+		<f:event listener="#{newLoginBean.loadBD}" type="preRenderView" />
+	</f:metadata>
+	
+	<ui:composition template="/templates/ejerciciosTemplate.xhtml">
+		<ui:define name="title">Algebra Relacional - UV</ui:define>
+		<ui:define name="content">
+			
+			<h:form>			
+				<p:panel styleClass="divs">
+					<h:panelGrid columns="3" cellpadding="5">
+						<h:commandLink value="Inicio" styleClass="linkTitulo" action="home"/>
+						>
+						<h:outputText value="Gestionar Ejercicios" styleClass="tituloPagina"/>
+					</h:panelGrid>
+				</p:panel>
+			</h:form>
+			
+			<p:spacer/>
+				
+			<h:form id="form" onkeypress="if (event.keyCode == 13) {return false; }">
+				<p:growl id="growl" showDetail="false"/>
+				
+				<p:dialog id="help" widgetVar="dlg" header="Ayuda" resizable="false" showEffect="fade" hideEffect="fade">
+					<p:fieldset legend="Gestionar Ejercicios" style="font-weight: bold;" >
+						<h2/>
+						1. Seleccione el botón <p:commandButton value="Guardar Cambios" icon="ui-icon-check" readonly="true" /> para aceptar y guardar cambios<p/> 
+						2. Seleccione el botón <p:commandButton value="Cancelar Cambios" icon="ui-icon-cancel" readonly="true" /> para cancelar los cambios realizados<p/>
+						
+						<h:outputText value="Editar Ejercicios: " style="color:#e69700"/> <p/>
+						a. Seleccione el botón <p:commandButton value="Agregar Ejercicio" icon="ui-icon-plus" readonly="true" /> para agregar un Ejercicio, o seleccione el botón <p:commandButton value="Quitar Ejercicio" icon="ui-icon-minus" readonly="true" /> para quitar un Ejercicio <p/>
+						b. Para editar un Ejercicio, debe elegir el Ejercicio desde las pestañas y seleccionar el botón <p:commandButton value="Editar" icon="ui-icon-pencil" readonly="true" /> <p/>
+						c. Utilize la herramienta de Consultas para generar las Consultas y Relaciones Resultantes del Ejercicio a editar <p/>
+						d. Seleccione el botón <p:commandButton value="Listo" icon="ui-icon-check" readonly="true" /> para finalizar los cambios <p/>
+						e. Seleccione el botón <p:commandButton value="Eliminar" icon="ui-icon-close" readonly="true" /> para eliminar el ejercicio seleccionado <p/>
+						f. Seleccione el botón <p:commandButton value="Ver Respuesta" icon="ui-icon-zoomin" readonly="true" /> para ver la respueta guardada anteriormente del ejercicio a editar <p/>
+						
+						<h:outputText value="Nota Importante: " style="color:#e69700"/> <p/>
+						Cada vez que edite un ejercicio, indique <h:outputText value="textualmente el orden de los atributos de la relación resultante" style="color:#e69700"/>, ya que al revisar si un ejercicio está correcto, el <p/>
+						programa sólo se preocupará de ver si la <h:outputText value="cantidad o el tipo de tuplas son las correstas" style="color:#e69700"/> (independiente del orden de ellas), pero no si <h:outputText value="orden de los atributos" style="color:#e69700"/> <p/>
+						es el correcto. Es por esto que al indicar <h:outputText value="textualmente el orden de los atributos de la relación resultante" style="color:#e69700"/>, el alumno se verá obligado a generar una relación <p/>
+						con dicho orden.
+						<h2/>
+					</p:fieldset>
+			    </p:dialog>  
+			    
+				<p:fieldset styleClass="divs">
+					<f:facet name="legend">
+						<h:panelGrid columns="2" cellpadding="5">
+							<h:outputText value="Gestionar Ejercicios" />
+							<h:outputLink value="javascript:void(0)" onclick="PF('dlg').show();" >
+								<span class="ui-icon ui-icon-help" />
+							</h:outputLink>
+						</h:panelGrid>
+					</f:facet>
+				
+					<p:scrollPanel id="consultas" mode="native" styleClass="divs"
+						style="height:100%!important;width:99%!important;margin:0 auto!important" >
+					
+						<h:panelGrid columns="4" cellpadding="5" >
+						
+							<h:outputText value="Cantidad de Preguntas: "/>
+							
+				            <p:inputText id="ajaxSpinner" value="#{dtGestionarEjerciciosBean.cantEjercicios}" min="0"
+				            	readonly="true" dir="rtl"
+				            	disabled="#{dtGestionarEjerciciosBean.selectedEjercicio == null ? 'false' : 'true'}" >
+				                <p:ajax event="change" update=":form" />
+				            </p:inputText>     
+				            <p:commandButton value="Agregar Ejercicio" action="#{dtGestionarEjerciciosBean.agregarEjercicio}" 
+				            	update=":form" icon="ui-icon-plus"
+				            	disabled="#{dtGestionarEjerciciosBean.selectedEjercicio == null ? 'false' : 'true'}"/>
+				            	
+				            <p:commandButton value="Quitar Ejercicio" action="#{dtGestionarEjerciciosBean.quitarEjercicio}" 
+				            	update=":form" icon="ui-icon-minus"
+				            	disabled="#{dtGestionarEjerciciosBean.selectedEjercicio == null ? 'false' : 'true'}"/>
+				     	</h:panelGrid>
+				        
+					    <p:tabView id="radioDT" rendered="#{dtGestionarEjerciciosBean.cantEjercicios == 0 ? 'false' : 'true'}" value="#{dtGestionarEjerciciosBean.ejercicios}" 
+					    	var="ejercicio"	style="width:99%">
+					        <p:tab title="Ejercicio #{ejercicio.id + 1}" disabled="#{dtGestionarEjerciciosBean.selectedEjercicio == null ? 'false' : 'true'}">
+					            <h:panelGrid columns="2" cellpadding="5" style="width:100%!important">
+					                               
+					                <h:outputText value="Pregunta: *"  style="font-weight: bold"/>
+	          						<h:outputText value="#{ejercicio.pregunta}" required="true" label="text" 
+	          							rendered="#{dtGestionarEjerciciosBean.selectedEjercicio == null ? 'true' : 'false'}" />
+	          						<p:inputText value="#{ejercicio.pregunta}" required="false" label="text" style="width:100%!important"
+	          							rendered="#{dtGestionarEjerciciosBean.selectedEjercicio == null ? 'false' : 'true'}" />	
+	          							
+	          						<h:outputText value="Ejecutar Consultas: " style="font-weight: bold"/>	
+									
+									<p:panelGrid columns="1">
+									<p:toolbar>
+										<f:facet name="left">
+											<p:commandButton type="push" title="Seleccionar" value="&#963;"
+												disabled="#{dtGestionarEjerciciosBean.selectedEjercicio == null ? 'true' : 'false'}" 
+												action="#{dtGestionarEjerciciosBean.ayudaSeleccionar}" update=":form" ajax="true"/>
+											<p:commandButton type="push" title="Proyectar" value="&#960;"
+												disabled="#{dtGestionarEjerciciosBean.selectedEjercicio == null ? 'true' : 'false'}"										
+												action="#{dtGestionarEjerciciosBean.ayudaProyectar}" update=":form" ajax="true"/>
+											<p:commandButton type="push" title="Renombrar" value="&#961;"
+												disabled="#{dtGestionarEjerciciosBean.selectedEjercicio == null ? 'true' : 'false'}"
+												action="#{dtGestionarEjerciciosBean.ayudaRenombrar}" update=":form" ajax="true"/>
+											<p:commandButton type="push" title="Union" value="&#8746;"
+												disabled="#{dtGestionarEjerciciosBean.selectedEjercicio == null ? 'true' : 'false'}"
+												action="#{dtGestionarEjerciciosBean.ayudaUnion}" update=":form" ajax="true"/>
+											<p:commandButton type="push" title="Interseccion" value="&#8745;"
+												disabled="#{dtGestionarEjerciciosBean.selectedEjercicio == null ? 'true' : 'false'}"
+												action="#{dtGestionarEjerciciosBean.ayudaInterseccion}" update=":form" ajax="true"/>
+											<p:commandButton type="push" title="Diferencia" value="&#8211;"
+												disabled="#{dtGestionarEjerciciosBean.selectedEjercicio == null ? 'true' : 'false'}"
+												action="#{dtGestionarEjerciciosBean.ayudaDiferencia}" update=":form" ajax="true"/>
+											<p:commandButton type="push" title="Producto Cruz" value="&#215;"
+												disabled="#{dtGestionarEjerciciosBean.selectedEjercicio == null ? 'true' : 'false'}"
+												action="#{dtGestionarEjerciciosBean.ayudaCruz}" update=":form" ajax="true"/>
+											<p:commandButton type="push" title="Reunion Natural" value="⋈"
+												disabled="#{dtGestionarEjerciciosBean.selectedEjercicio == null ? 'true' : 'false'}"
+												action="#{dtGestionarEjerciciosBean.ayudaReunionNatural}" update=":form" ajax="true"/>
+											<p:commandButton type="push" title="Reunion Externa Izquierda" value="]⋈"
+												disabled="#{dtGestionarEjerciciosBean.selectedEjercicio == null ? 'true' : 'false'}"
+												action="#{dtGestionarEjerciciosBean.ayudaReunionExtIzq}" update=":form" ajax="true"/>
+											<p:commandButton type="push" title="Reunion Externa Derecha" value="⋈["
+												disabled="#{dtGestionarEjerciciosBean.selectedEjercicio == null ? 'true' : 'false'}"
+												action="#{dtGestionarEjerciciosBean.ayudaReunionExtDer}" update=":form" ajax="true"/>
+												
+												
+											<p:commandButton type="push" title="Reunion Externa Completa" value="]⋈["
+												disabled="#{dtGestionarEjerciciosBean.selectedEjercicio == null ? 'true' : 'false'}"
+												action="#{dtGestionarEjerciciosBean.ayudaReunionExtComp}" update=":form" ajax="true"/>
+											
+											<p:commandButton type="push" title="Asignar" value="&#8592;"
+												disabled="#{dtGestionarEjerciciosBean.selectedEjercicio == null ? 'true' : 'false'}"
+												action="#{dtGestionarEjerciciosBean.ayudaAsignar}" update=":form" ajax="true"/>
+												
+											<p:commandButton type="push" title="Division" value="&#247;"
+												disabled="#{dtGestionarEjerciciosBean.selectedEjercicio == null ? 'true' : 'false'}"
+												action="#{dtGestionarEjerciciosBean.ayudaDivision}" update=":form" ajax="true"/>
+												
+							
+											<p:commandButton type="push" title="Ordenar" value="&#932;"
+												disabled="#{dtGestionarEjerciciosBean.selectedEjercicio == null ? 'true' : 'false'}"
+												action="#{dtGestionarEjerciciosBean.ayudaOrdenar}" update=":form" ajax="true"
+												/>
+							
+											<p:commandButton type="push" title="Agrupar" value="&#915;"
+											disabled="#{dtGestionarEjerciciosBean.selectedEjercicio == null ? 'true' : 'false'}"
+												action="#{dtGestionarEjerciciosBean.ayudaAgrupar}" update=":form" ajax="true"
+												/>
+							
+											<p:commandButton type="push" title="Funcion de Agregacion" value="F. Agregación"
+												disabled="#{dtGestionarEjerciciosBean.selectedEjercicio == null ? 'true' : 'false'}"
+												action="#{dtGestionarEjerciciosBean.ayudaFuncionAgregacion}" update=":form" ajax="true"
+												/>
+								
+												
+												
+												
+												
+												
+										</f:facet>
+									</p:toolbar>								
+									<h:panelGrid columns="2" style="width:100%">
+										<p:inputText size="150" style="width:95%" id="query" value="#{ejercicio.query}"
+											disabled="#{dtGestionarEjerciciosBean.selectedEjercicio == null ? 'true' : 'false'}"/>
+										<p:commandButton  icon="ui-icon-check" id="ejecutar" type="push" title="Ejecutar" value="Ejecutar" ajax="true"
+											disabled="#{dtGestionarEjerciciosBean.selectedEjercicio == null ? 'true' : 'false'}"  
+											action="#{dtGestionarEjerciciosBean.ejecutar}" update=":form :formDataList" oncomplete="PF('queryDialog').show()"/>	
+									</h:panelGrid>	
+									</p:panelGrid>																					
+					                
+					                <h:outputText value="Consultas: *" style="font-weight: bold"/>
+					                <h:outputText value="#{ejercicio.consultas}" required="true" label="text" 
+	          							rendered="#{dtGestionarEjerciciosBean.selectedEjercicio == null ? 'true' : 'false'}" />
+	          						<p:inputTextarea rows="6" style="width:98%" id="grupoConsultas" disabled="false" value="#{ejercicio.queryList}"
+	          							rendered="#{dtGestionarEjerciciosBean.selectedEjercicio == null ? 'false' : 'true'}" />
+					                
+					                <h:outputText value="Relación Resultante: *" style="font-weight: bold"/>					                
+					                <h:outputText value="#{ejercicio.respuesta}" required="true" label="text" 
+	          							rendered="#{dtGestionarEjerciciosBean.selectedEjercicio == null ? 'true' : 'false'}" />
+	          						<p:inputText value="#{ejercicio.respuesta}" required="false" label="text" style="width:100%!important"
+	          							rendered="#{dtGestionarEjerciciosBean.selectedEjercicio == null ? 'false' : 'true'}" />
+	          							
+					                				             
+					                <p:commandButton value="Editar" process="radioDT" icon="ui-icon-pencil" title="Modificar" update="@form"
+					                	rendered="#{dtGestionarEjerciciosBean.selectedEjercicio == null ? 'true' : 'false'}" ajax="true">
+<!-- 					                	oncomplete="PF('helpDialog').show()"        					 -->
+	                					<f:setPropertyActionListener value="#{ejercicio}" target="#{dtGestionarEjerciciosBean.selectedEjercicio}" />
+	            					</p:commandButton>
+	            					<p:spacer/>
+	            					 
+	            					<h:panelGrid columns="4" rendered="#{dtGestionarEjerciciosBean.selectedEjercicio == null ? 'false' : 'true'}">		   					
+		            					<p:commandButton value="Listo"  icon="ui-icon-check" title="Listo" update="@form" ajax="true"
+		            						rendered="#{dtGestionarEjerciciosBean.selectedEjercicio == null ? 'false' : 'true'}" action="#{dtGestionarEjerciciosBean.aceptar}">
+		            					</p:commandButton>
+		            					
+		            					<p:commandButton value="Eliminar" icon="ui-icon-close" title="Eliminar" update="@form" ajax="true"
+						                	rendered="#{dtGestionarEjerciciosBean.selectedEjercicio == null ? 'false' : 'true'}" action="#{dtGestionarEjerciciosBean.eliminar}">           					
+		            						<p:confirm header="Confirmacion" message="¿Desea eliminar el ejercicio?" icon="ui-icon-alert" />
+		            					</p:commandButton>
+		            					
+		            					<p:commandButton value="Ver Respuesta"  icon="ui-icon-zoomin" title="Ver Respuesta" update="@form" ajax="true"
+		            						rendered="#{dtGestionarEjerciciosBean.selectedEjercicio == null ? 'false' : 'true'}" action="#{dtGestionarEjerciciosBean.verRespuesta}"
+		            						oncomplete="PF('queryDialog').show()">
+		            					</p:commandButton>
+		            					
+		            					 <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+									        <p:commandButton value="Sí" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+									        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+									    </p:confirmDialog>
+	            					</h:panelGrid>           
+	
+	
+					            </h:panelGrid>
+					        </p:tab>
+					            
+					    </p:tabView>
+				    
+					</p:scrollPanel>
+					
+					<p:spacer/>	
+					
+					 <p:dialog header="Resultado" widgetVar="queryDialog" closable="true" modal="false" showEffect="fade" hideEffect="fade" resizable="false">
+				        <p:panel id="queryDetail" style="height:235px!important;width:970px!important">
+						<p:dataTable value="#{dtGestionarEjerciciosBean.data}" var="item" scrollable="true" scrollHeight="165"
+							emptyMessage="Ingrese su consulta en Algebra Relacional"> 
+							<f:facet name="header">
+								<h:outputText value="#{dtGestionarEjerciciosBean.tableName}" />
+							</f:facet>
+		    				<p:columns value="#{dtGestionarEjerciciosBean.columnNames}" var="columnName" columnIndexVar="i"> 
+		        				<f:facet name="header">
+		        					<h:outputText value="#{columnName}"/>
+		        				</f:facet>
+		        				<h:outputText value="#{item[i] != null ? item[i] : 'Nulo'}"/>
+		    				</p:columns> 
+						</p:dataTable>
+						</p:panel>			 
+			    	</p:dialog>
+			    				    			    			  			    									
+				<p:panel styleClass="divs">
+					<h:panelGrid columns="2" cellpadding="5">
+						
+						<p:commandButton value="Guardar Cambios" action="#{dtGestionarEjerciciosBean.crear}" 
+								update="form" icon="ui-icon-check" ajax="true"
+				            	disabled="#{dtGestionarEjerciciosBean.selectedEjercicio == null ? 'false' : 'true'}"/>
+				            	
+				        <p:commandButton value="Cancelar Cambios"  action="home"
+				        		update="form" icon="ui-icon-cancel"
+				            	disabled="#{dtGestionarEjerciciosBean.selectedEjercicio == null ? 'false' : 'true'}"/>
+												
+					</h:panelGrid>
+				
+				</p:panel>
+				
+				</p:fieldset>
+			
+			</h:form>
+		</ui:define>
+	</ui:composition>
+
+</h:body>
+</html>

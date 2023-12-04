@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:body>
+
+	<f:metadata>
+		<f:event listener="#{newLoginBean.loadBD}" type="preRenderView" />
+		<f:event listener="#{newLoginBean.isMyBd}" type="preRenderView" />
+	</f:metadata>
+
+	<ui:composition template="/templates/homeTemplate.xhtml">
+		<ui:define name="title">Algebra Relacional - UV</ui:define>
+		<ui:define name="content">
+			
+			<h:form>			
+				<p:panel styleClass="divs">
+					<h:panelGrid columns="3" cellpadding="5">
+						<h:commandLink value="Inicio" styleClass="linkTitulo" action="home"/>
+						>
+						<h:outputText value="Modificar Relación" styleClass="tituloPagina"/>
+					</h:panelGrid>
+				</p:panel>
+			</h:form>
+			
+			<p:spacer/>
+				
+			<h:form id="form" onkeypress="if (event.keyCode == 13) {return false; }">
+				<p:growl id="growl" showDetail="false"/>
+				
+				<p:dialog id="help" widgetVar="dlg" header="Ayuda" resizable="false" showEffect="fade" hideEffect="fade">
+					<p:fieldset legend="Modificar Relación" style="font-weight: bold;" >
+						<h2/>
+						1. Elija una Relación de la tabla seleccionando el botón <p:commandButton icon="ui-icon-pencil" readonly="true" /> <p/>
+						2. Modifique el Nombre y la Cantidad de Atributos de la Relación para actualizar la Tabla <h:outputText value="Atributos" style="color:#e69700"/> <p/>
+						3. Para modificar algún atributo, debe seleccionar el botón  <h:outputText style="display: inline-block" styleClass="ui-icon ui-icon-pencil" />  para modificarlo <p/>
+						4. Luego de modificar dicho atributo, seleccione el botón <h:outputText style="display: inline-block" styleClass="ui-icon ui-icon-check" /> para aceptar los cambios, de lo contrario seleccione el botón <h:outputText style="display: inline-block" styleClass="ui-icon ui-icon-close" />  para cancelar los cambios <p/>						
+						5. Para reflejar los cambios en la Base de Datos, seleccione el botón <p:commandButton value="Modificar" icon="ui-icon-pencil" readonly="true" /> <p/>
+						6. Si no es la Relación que desea modificar, sólo basta con cerrar el cuadro de mensaje y elegir otra Relación apretando el botón <p:commandButton icon="ui-icon-pencil" readonly="true" /> <p/>
+						7. Si desea buscar una Relación, ingrese algún campo de búsqueda en la sección <h:outputText value="Buscar en todos los Campos: " style="color:#e69700"/> <p:inputText style="width:150px" placeholder="Buscar" readonly="true"/>
+						<h2/>
+					</p:fieldset>
+			    </p:dialog>  
+			    
+				<p:fieldset styleClass="divs">
+				<f:facet name="legend">
+					<h:panelGrid columns="2" cellpadding="5">
+						<h:outputText value="Modificar Relación" />
+						<h:outputLink value="javascript:void(0)" onclick="PF('dlg').show();" >
+							<span class="ui-icon ui-icon-help" />
+						</h:outputLink>
+					</h:panelGrid>
+				</f:facet>	
+				
+			    <p:dataTable id="radioDT" var="relacion" value="#{gestionarRelacionBean.relaciones}" widgetVar="relacionesTable"
+			                 emptyMessage="No se encuentran Relaciones con este criterio" filteredValue="#{gestionarRelacionBean.filteredRelaciones}"
+			                 paginator="true" rows="12"
+				             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+			        <f:facet name="header">
+			      		<p:outputPanel style="text-align: right;">
+			                <h:outputText value="Buscar en todos los Campos: " />
+			                <p:inputText id="globalFilter" onkeyup="PF('relacionesTable').filter()" style="width:150px" placeholder="Buscar"/>
+			            </p:outputPanel>
+			        </f:facet>
+			        <p:column style="width:35px;text-align: center">
+             			<p:commandButton process="radioDT" update=":form:relacionDetail" oncomplete="PF('relacionDialog').show()" icon="ui-icon-pencil" title="Eliminar">
+                			<f:setPropertyActionListener value="#{relacion}" target="#{gestionarRelacionBean.selectedRelacion}" />
+            			</p:commandButton>
+            		</p:column>		      
+			        <p:column headerText="Nombre" filterBy="#{relacion.nombre}" filterStyle="display:none" filterMatchMode="contains">
+			            <h:outputText value="#{relacion.nombre}" />
+			        </p:column>
+			    </p:dataTable>
+			    </p:fieldset>
+
+
+
+
+
+			    <p:dialog header="Modificar Relación" widgetVar="relacionDialog" modal="false" showEffect="fade" hideEffect="fade" resizable="false">
+			        <p:outputPanel id="relacionDetail" style="text-align:left;">
+			        			        
+				        <p:fieldset>
+					        <f:facet name="legend">
+					            <h:panelGrid styleClass="divs" columns="2" cellpadding="10">
+						        	<span class="ui-icon ui-icon-info" />	
+						        		<h:panelGrid>
+						        			<!--  -->
+						        			<h:outputText  value="Al modificar la relación, se perderán todos los datos que ésta contenga." style="font-weight: bold;"/>	        			
+						        			<h:outputText  value="Seleccione el botón Modificar para guardar los cambios." style="font-weight: bold;"/>
+						        		</h:panelGrid>        					        						        		
+					        	</h:panelGrid>	
+					        </f:facet>
+					        <h:panelGrid columns="2" cellpadding="5" style="margin: 0 auto !important">
+								<h:outputText value="Nombre de la Relación: *" />
+								<p:inputText id="nombre" value="#{gestionarRelacionBean.selectedRelacion.nombre}"
+									requiredMessage="El Nombre de la Relación no debe ser vacío" required="true"
+									validatorMessage="La relación debe comenzar con una letra y sólo debe contener caracteres alfanuméricos o el guión bajo" >
+							        <f:validateRegex pattern="^[a-zA-Z][a-zA-Z0-9_]*" />							
+									<!-- <p:ajax event="change" update=":form:growl" /> -->
+								</p:inputText>
+										 
+						        <h:outputText value="Cantidad de Atributos: *" />
+							    <p:spinner id="cant" value="#{gestionarRelacionBean.cantSelected}" min="1" max="10">
+							    	<p:ajax update=":form:growl :form:relacionDetail" />
+							   	</p:spinner>
+						    </h:panelGrid> 			   
+					            
+				<!-- TABLA ATRIBUTOS /> -->     
+					        <p:dataTable id="relacionDT" var="atributo" value="#{gestionarRelacionBean.atributosBean}" widgetVar="atributosTable"
+					          	emptyMessage="No hay atributos" style="width:500px; margin: 0 auto !important" editable="true" editmode="cell">
+						        <f:facet name="header">
+									Atributos
+						        </f:facet>
+						        
+						        <p:column style="width:32px">
+						           <p:rowEditor />
+						       	</p:column>
+						       	
+						        <p:column headerText="Nombre Atributo">
+						        	<p:cellEditor>
+						        		<f:facet name="output"><h:outputText value="#{atributo.nombre}"/></f:facet>
+						        		<f:facet name="input">
+						        			<p:inputText id="nombreInput" value="#{atributo.nombre}" style="width:100%"
+						        				requiredMessage="El Nombre del Atributo no debe ser vacío" required="true"
+												validatorMessage="La Atributo debe comenzar con una letra y sólo debe contener caracteres alfanuméricos o el guión bajo" >
+									            <f:validateRegex pattern="^[a-zA-Z][a-zA-Z0-9_]*" />
+												<p:ajax event="change" update=":form:growl" />
+						        			</p:inputText>
+						        		</f:facet>
+						        	</p:cellEditor>
+						        </p:column>
+						        
+						        <p:column headerText="Primario">
+						        	<p:cellEditor>
+						        		<f:facet name="output"><h:outputText value="#{atributo.esPrimario}" /></f:facet>
+						        		<f:facet name="input">
+						        			<h:selectOneMenu id="primarioInput" value="#{atributo.esPrimario}" style="width:100%">
+						        				<f:selectItem itemLabel="Sí" itemValue="Sí"/>
+						        				<f:selectItem itemLabel="No" itemValue="No"/>
+						        			</h:selectOneMenu>
+						        		</f:facet>
+						        	</p:cellEditor>
+						        </p:column>
+						        
+						        <p:column headerText="Tipo">
+						        	<p:cellEditor>
+						        		<f:facet name="output"><h:outputText value="#{atributo.tipo}" /></f:facet>
+						        		<f:facet name="input">
+						        			<h:selectOneMenu id="tipoInput" value="#{atributo.tipo}" style="width:100%">
+						        				<f:selectItem itemLabel="Entero" itemValue="Entero"/>
+						        				<f:selectItem itemLabel="Real" itemValue="Real"/>
+						        				<f:selectItem itemLabel="Cadena" itemValue="Cadena"/>
+						        			</h:selectOneMenu>
+						        		</f:facet>
+						        	</p:cellEditor>
+						        </p:column>			      
+						    </p:dataTable>
+					    </p:fieldset>
+				        
+				        <h:panelGrid style="margin: 0 auto !important">    
+				            <p:commandButton update="form" icon="ui-icon-pencil" value="Modificar" ajax="false" 
+				            	action="#{gestionarRelacionBean.modificarRelacion}" />			        
+						</h:panelGrid>
+			            	
+			        </p:outputPanel>
+			    </p:dialog>
+		    
+			</h:form>
+		</ui:define>
+	</ui:composition>
+
+
+</h:body>
+</html>

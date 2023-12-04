@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:body>
+	
+	<f:metadata>
+		<f:event listener="#{newLoginBean.isAdmin}" type="preRenderView" />
+	</f:metadata>
+	
+	<ui:composition template="/templates/homeTemplate.xhtml">
+		<ui:define name="title">Algebra Relacional - UV</ui:define>
+		<ui:define name="content">
+			<h:form>			
+				<p:panel styleClass="divs">
+					<h:panelGrid columns="3" cellpadding="5">
+						<h:commandLink value="Inicio" styleClass="linkTitulo" action="home"/>
+						>
+						<h:outputText value="Crear Cuenta Estudiante" styleClass="tituloPagina"/>
+					</h:panelGrid>
+				</p:panel>
+			</h:form>
+			
+			<p:spacer/>
+			
+			<h:form onkeypress="if (event.keyCode == 13) {return false; }">
+			
+				<p:dialog id="help" widgetVar="dlg" header="Ayuda" resizable="false" showEffect="fade" hideEffect="fade">
+					<p:fieldset legend="Crear Cuenta Estudiante" style="font-weight: bold;" >
+						<h2/>
+						1. Ingrese todos los campos solicitados del formulario <p/>
+						2. Cuando esté listo, seleccione el botón <p:commandButton value="Siguiente" icon="ui-icon-arrowthick-1-e" readonly="true" /> para seguir llenando el formulario <p/>
+						3. Seleccione el botón <p:commandButton value="Atrás" icon="ui-icon-arrowthick-1-w" readonly="true" /> para volver al formulario anterior <p/>						
+						4. Finalmente, seleccione el botón <p:commandButton value="Crear" icon="ui-icon-check" readonly="true" /> para generar la nueva Cuenta Estudiante <p/>
+						<h2/>
+					</p:fieldset>
+			    </p:dialog> 
+											
+				<p:growl id="growl" sticky="true" showDetail="false"/>
+				<p:fieldset styleClass="divs">
+				<f:facet name="legend">
+					<h:panelGrid columns="2" cellpadding="5">
+						<h:outputText value="Crear Cuenta" />
+						<h:outputLink value="javascript:void(0)" onclick="PF('dlg').show();" >
+							<span class="ui-icon ui-icon-help" />
+						</h:outputLink>
+					</h:panelGrid>
+				</f:facet>	 	
+			    <p:wizard showStepStatus="false" nextLabel="Siguiente" backLabel="Atrás">
+			        <p:tab id="personal" title="Personal">
+			            <p:panel header="Datos Personales Estudiante" styleClass="formato">
+			            
+			                <h:panelGrid columns="3" columnClasses="label, value">
+			                    <h:outputText value="Primer Nombre *"  styleClass="formato"/>
+			                    <p:inputText id="nombre1" value="#{gestionarCuentasBean.user.nombre1}" label="Nombre1" 
+			                    	required="true" requiredMessage="Debe ingresar su Primer Nombre"
+			                    	validatorMessage="En el campo Primer Nombre sólo debe ingresar texto">
+		                    		<f:validateRegex pattern="[a-zA-ZñÑáÁéÉíÍóÓúÚäÄëËïÏöÖüÜàÀèÈìÌòÒùÙâÂêÊîÎôÔû]+" />
+			                    </p:inputText>
+			                    <p:message for="nombre1"/>
+			 
+			                    <h:outputText value="Segundo Nombre *" styleClass="formato"/>
+			                    <p:inputText id="nombre2" value="#{gestionarCuentasBean.user.nombre2}" label="Nombre2"
+			                    	required="true" requiredMessage="Debe ingresar su Segundo Nombre"
+			                    	validatorMessage="En el campo Primer Nombre sólo debe ingresar texto">
+		                    		<f:validateRegex pattern="[a-zA-ZñÑáÁéÉíÍóÓúÚäÄëËïÏöÖüÜàÀèÈìÌòÒùÙâÂêÊîÎôÔû]+" />
+			                    </p:inputText>
+			                    <p:message for="nombre2"/>
+			                    
+			                    <h:outputText value="Apellido Paterno *" styleClass="formato"/>
+			                    <p:inputText id="paterno" value="#{gestionarCuentasBean.user.paterno}" label="Paterno" 
+			                    	required="true" requiredMessage="Debe ingresar su Apellido Paterno"
+			                    	validatorMessage="En el campo Primer Nombre sólo debe ingresar texto">
+		                    		<f:validateRegex pattern="[a-zA-ZñÑáÁéÉíÍóÓúÚäÄëËïÏöÖüÜàÀèÈìÌòÒùÙâÂêÊîÎôÔû]+" />
+			                    </p:inputText>
+			                    <p:message for="paterno"/>
+			                    
+			                    <h:outputText value="Apellido Materno *" styleClass="formato"/>
+			                    <p:inputText id="materno" value="#{gestionarCuentasBean.user.materno}"  label="Materno"
+			                    	required="true" requiredMessage="Debe ingresar su Apellido Materno"
+			                    	validatorMessage="En el campo Primer Nombre sólo debe ingresar texto">
+		                    		<f:validateRegex pattern="[a-zA-ZñÑáÁéÉíÍóÓúÚäÄëËïÏöÖüÜàÀèÈìÌòÒùÙâÂêÊîÎôÔû]+" />
+			                    </p:inputText>
+			                    <p:message for="materno"/>
+			 
+			                    <h:outputText value="Año de Nacimiento *" styleClass="formato"/>
+			                    <p:inputText id="edad" value="#{gestionarCuentasBean.user.edad}" label="Edad"
+			                    	required="true" requiredMessage="Debe ingresar Año de Nacimiento"
+			                    	validatorMessage="Debe ingresar sólo dígitos">
+			                    	<f:validateRegex pattern="[0-9]*$" />
+			                    </p:inputText>
+			                    <p:message for="edad"/>
+			 
+			                </h:panelGrid>
+			            </p:panel>
+			        </p:tab>
+			 
+			        <p:tab id="cuenta" title="Cuenta">
+			            <p:panel header="Datos de la Cuenta Estudiante" styleClass="formato">
+			            
+			                <h:panelGrid columns="3" columnClasses="label, value">
+			                    <h:outputText value="Rut *" styleClass="formato"/>
+			                    <p:inputText id="rut" value="#{gestionarCuentasBean.user.rut}" label="Rut" required="true" 
+			                    	validatorMessage="Ingrese 8 Digitos, sin puntos ni dígito verificador" 
+			                    	requiredMessage="Debe ingresar su Rut">
+			                    	<f:validateRegex pattern="[0-9]{8}$" />
+			            			<p:watermark for="rut" value="Ej: 12345678"/>
+			            		</p:inputText>
+			            		<p:message for="rut"/>
+			                    
+			                    <h:outputText value="Mail *" styleClass="formato"/>
+			                    <p:inputText id="mail" value="#{gestionarCuentasBean.user.mail}" label="Mail"
+			                    	required="true" requiredMessage="Debe ingresar su Mail"
+			                    	validatorMessage="Debe ingresar un mail Válido">
+			                    	<f:validateRegex pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+			                    </p:inputText>			        
+			                    <p:message for="mail"/>
+			                    
+			                    <h:outputText value="Contraseña *" styleClass="formato"/>
+			                    <p:password id="pass" value="#{gestionarCuentasBean.user.pass}" feedback="true" required="true" 
+			                    	requiredMessage="Debe ingresar su Contraseña" 
+			                    	match="confPass" validatorMessage="Contraseña no coinciden"/>
+			                    <p:message for="pass"/>
+			 
+			                    <h:outputText value="Confirmar Contraseña *" styleClass="formato"/>
+			                    <p:password id="confPass" value="#{gestionarCuentasBean.user.pass}" feedback="false" required="true"
+			                    	requiredMessage="Debe confirmar su contraseña"/>
+			                    <p:message for="confPass"/>
+			 
+			                </h:panelGrid>
+			            </p:panel>
+			        </p:tab>
+			 
+			        <p:tab id="academico" title="Academico">
+			            <p:panel header="Datos Academicos Estudiante">
+			            
+			                <h:panelGrid columns="3" columnClasses="label, value">
+			                    <h:outputText value="Año de Ingreso *" />
+			                    <p:inputText id="año" value="#{gestionarCuentasBean.user.anyo}" label="año"
+			                    	required="true" requiredMessage="Debe ingresar el año de ingreso a la Universidad"
+			                    	validatorMessage="Debe ingresar sólo dígitos">
+			                    	<f:validateRegex pattern="[0-9]*$" />
+			                    </p:inputText>
+			                    <p:message for="año"/>			 
+			 
+			                </h:panelGrid>
+			            </p:panel>
+			        </p:tab>
+			 
+			        <p:tab id="confirm" title="Confirmacion">
+			            <p:panel header="Verificar Datos del Estudiante">
+			                <h:panelGrid id="confirmation" columns="3" columnClasses="grid,grid,grid" style="margin:0 auto !important;">
+			                
+			                	<p:fieldset legend="Datos Personales">
+			                	<h:panelGrid columns="2" columnClasses="label, value" style="width: 200px;">
+			                    			                    	
+			                        <h:outputText value="Primer Nombre: " styleClass="formato" />
+			                        <h:outputText value="#{gestionarCuentasBean.user.nombre1}" styleClass="outputLabel"/>
+			 
+			                        <h:outputText value="Segundo Nombre: " styleClass="formato" />
+			                        <h:outputText value="#{gestionarCuentasBean.user.nombre2}" styleClass="outputLabel"/>
+			                        
+			                        <h:outputText value="Apellido Paterno: " styleClass="formato"/>
+			                        <h:outputText value="#{gestionarCuentasBean.user.paterno}" styleClass="outputLabel"/>
+			                        
+			                        <h:outputText value="Apellido Materno: " styleClass="formato"/>
+			                        <h:outputText value="#{gestionarCuentasBean.user.materno}" styleClass="outputLabel"/>
+			 
+			                        <h:outputText value="Año de Nacimiento: " styleClass="formato"/>
+			                        <h:outputText value="#{gestionarCuentasBean.user.edad}" styleClass="outputLabel"/>
+			                        
+			                    </h:panelGrid>			                	
+			                	</p:fieldset>
+			                    			                  			 
+			                    <p:fieldset legend="Datos de Cuenta">
+			                    <h:panelGrid columns="2" columnClasses="label, value" style="width: 200px;">
+			                    		                        
+			                        <h:outputText value="Rut: " styleClass="formato"/>
+			                        <h:outputText value="#{gestionarCuentasBean.user.rut}" styleClass="outputLabel"/>
+			                        
+			                        <h:outputText value="Mail: " styleClass="formato"/>
+			                        <h:outputText value="#{gestionarCuentasBean.user.mail}" styleClass="outputLabel"/>
+			                        
+			                        <h:outputText value="Pass: " styleClass="formato"/>
+			                        <h:outputText value="#{gestionarCuentasBean.user.pass}" styleClass="outputLabel"/>
+			                        
+			                        <h:outputText value=" "/>
+			                        <p:spacer/>
+			                        
+			                        <h:outputText value=" "/>
+			                        <p:spacer/>
+			 
+			                    </h:panelGrid>
+			                    </p:fieldset>
+			 
+			                    <p:fieldset legend="Datos Académicos">
+			                    <h:panelGrid columns="2" columnClasses="label, value" style="width: 200px;">
+			                    	                    		                        
+			                        <h:outputText value="Año Ingreso: " styleClass="formato"/>
+			                        <h:outputText value="#{gestionarCuentasBean.user.anyo}" styleClass="outputLabel"/>
+			 
+			                        <h:outputText value=" "/>
+									<p:spacer/>
+			                        
+			                        <h:outputText value=" "/>
+			                        <p:spacer/>
+			                        
+			                        <h:outputText value=" "/>
+			                        <p:spacer/>
+			                        
+			                        <h:outputText value=" "/>
+			                        <p:spacer/>
+			                        
+
+			                    </h:panelGrid>
+			                    </p:fieldset>
+			                    
+			                </h:panelGrid>
+			 				
+			 				<h:panelGrid style="margin:0 auto !important;">
+			                	<p:commandButton icon="ui-icon-check" value="Crear" action="#{gestionarCuentasBean.save}" update="growl" ajax="true" process="@this"/>
+			            	</h:panelGrid>
+			            </p:panel>
+			        </p:tab>
+			    </p:wizard>
+			    </p:fieldset>
+			                 
+			</h:form>
+		</ui:define>
+	</ui:composition>
+
+</h:body>
+</html>

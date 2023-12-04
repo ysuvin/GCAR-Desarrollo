@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:body>
+	
+	<f:metadata>
+		<f:event listener="#{newLoginBean.loadBD}" type="preRenderView" />
+	</f:metadata>
+	
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"/>
+	<ui:composition template="/templates/consultaTemplate.xhtml">
+		<ui:define name="title">Algebra Relacional - UV</ui:define>
+		<ui:define name="content">
+		
+			<h:form>			
+				<p:panel styleClass="divs">
+					<h:panelGrid columns="3" cellpadding="5">
+						<h:commandLink value="Inicio" styleClass="linkTitulo" action="home"/>
+						>
+						<h:outputText value="Hacer Consulta AR" styleClass="tituloPagina"/>
+					</h:panelGrid>
+				</p:panel>
+			</h:form>
+			
+			<p:spacer/>
+			
+			<h:form id="form" onkeypress="if (event.keyCode == 13) {return false; }">
+				<p:growl id="growl" showDetail="false"/>
+				
+				<p:dialog id="help" widgetVar="dlg" header="Ayuda" resizable="false" showEffect="fade" hideEffect="fade" style="width:1000px;">
+					<p:scrollPanel style="width:100%; height: auto; border: none;">
+						<p:fieldset legend="Hacer Consulta AR" style="font-weight: bold;" >
+							<h2/>
+							1. En la secci&#243;n <h:outputText value="Consultas" style="color:#e69700"/> si usted posciciona el puntero sobre uno de los 16 botones, se desplgar&#225; un cuadro de ayuda para utilizar el <h:outputText value="Operador" style="color:#e69700"/> de &#193;lgebra Relacional<p/>
+							2. En la secci&#243;n <h:outputText value="Consultas" style="color:#e69700"/> usted puede seleccionar cualquier bot&#243;n y se insertar&#225; la estructura de uso del <h:outputText value="Operador" style="color:#e69700"/> dentro del cuadro de texto <p/>							
+							3. Luego de ingresar la consulta, seleccione el bot&#243;n <p:commandButton value="Ejecutar" icon="ui-icon-check" readonly="true" /> para ejecutar la consulta <p/>
+							4. En la secci&#243;n <p:commandButton value="Historial" readonly="true" /> se guarda el Historial de consultas realizadas <p/>
+							5. El nombre de las <h:outputText value="Relaciones" style="color:#e69700"/>, <h:outputText value="Atributos" style="color:#e69700"/>, <h:outputText value="Tipo de Dato" style="color:#e69700"/> y <h:outputText value="Clave Primaria" style="color:#e69700"/> de la Base de Datos cargada, adem&#225;s de las <h:outputText value="Relaciones Auxiliares" style="color:#e69700"/> con todos sus datos, se muestran a la Izquierda de la pantalla <p/>
+							
+							<h2/>
+						</p:fieldset>
+					</p:scrollPanel>
+			    </p:dialog>  
+			    
+				<p:fieldset styleClass="divs">
+				<f:facet name="legend">
+					<h:panelGrid columns="2" cellpadding="5">
+						<h:outputText value="Hacer Consulta" />
+						<h:outputLink value="javascript:void(0)" onclick="PF('dlg').show();" >
+							<span class="ui-icon ui-icon-help" />
+						</h:outputLink>
+					</h:panelGrid>
+				</f:facet>
+				
+				
+				
+							
+				<p:panel header="Consultas" id="consultaPanel" mode="native" style="margin:0 auto !important;">	
+				<p:toolbar>
+					<f:facet name="left">
+							
+						<p:commandButton id="seleccionarButton" type="push" value="Seleccionar &#963;"
+						    action="#{dtGestionarEjerciciosBean.ayudaSeleccionar}" update="form" ajax="true">						
+						    <p:tooltip for="seleccionarButton" escape="false">
+						        <div>
+						            <strong>SELECCIONAR</strong><br/>
+						            Selecciona las tuplas de una relaci&#243;n que cumplen con la condici&#243;n indicada. <br/>
+						            SELECCIONAR permite condiciones como: &#61;, !&#61;, &#60;, &#62;, &#60;=, &#62;=, !=, AND y OR.<br/>
+						            <br/>
+						            <strong>Estructura:</strong><br/>
+						            SELECCIONAR (<strong>lista_de_condiciones</strong>) (<strong>relacion</strong>)<br/>
+						            Reemplazar "<strong>lista_de_condiciones</strong>" y "<strong>relacion</strong>" por las condiciones y la relaci&#243;n a seleccionar.<br/>
+						            <br/>
+						            <strong>Ejemplo de uso utilizando la BD "empleados_sv":</strong><br/>
+						            SELECCIONAR (oficio = 'conserje' AND tarifa_sem > 150) (trabajador)
+						            						            						            
+						        </div>
+						    </p:tooltip>
+						</p:commandButton>			
+							
+						<p:commandButton id="proyectarButton" type="push" value="Proyectar &#960;"
+						    action="#{dtGestionarEjerciciosBean.ayudaProyectar}" update="form" ajax="true">						
+						    <p:tooltip for="proyectarButton" escape="false">
+						        <div>
+						            <strong>PROYECTAR</strong><br/>
+						            Muestra las tuplas de atributos de una relaci&#243;n.<br/>
+						            <br/>
+						            <strong>Estructura:</strong><br/>
+						            PROYECTAR (<strong>lista_de_atributos</strong>) (<strong>relacion</strong>) <br/>
+						            Reemplazar "<strong>lista_de_atributos</strong>" y "<strong>relacion</strong>" por los atributos a proyectar en la relaci&#243;n escogida.<br/>
+						            <br/>
+						            <strong>Ejemplo de uso utilizando la BD "empleados_sv":</strong><br/>
+						            PROYECTAR (id_trabajador, oficio) (trabajador)		            						            
+						        </div>
+						    </p:tooltip>
+						</p:commandButton>
+
+						<p:commandButton id="renombrarButton" type="push" value="Renombrar &#961;"
+						    action="#{dtGestionarEjerciciosBean.ayudaRenombrar}" update="form" ajax="true">						
+						    <p:tooltip for="renombrarButton" escape="false">
+						        <div>
+						            <strong>RENOMBRAR</strong><br/>
+						            Este operador se puede utilizar de dos formas:
+						            <br/>
+						            1. Para cambiar el nombre de una relaci&#243;n y todos los atributos, donde a los atributos se les agregar&#225; como prefijo el nuevo nombre de la relaci&#243;n. <br/>
+						            <strong>Estructura:</strong><br/> 
+						            RENOMBRAR <strong>nuevo_nombre</strong>(<strong>lista_de_atributos</strong>) (<strong>relacion</strong>)<br/>
+						            Reemplazar "<strong>nuevo_nombre</strong>", "<strong>lista_de_atributos</strong>" y "<strong>relacion</strong>" por un nuevo nombre para la relaci&#243;n, todos los atributos de la relaci&#243;n y  la relaci&#243;n<br/> 
+						            a renombrar.<br/>
+						            <br/>
+						            2. Para cambiar solo el nombre de una relaci&#243;n.<br/>
+						            <strong>Estructura:</strong><br/> 
+						            RENOMBRAR <strong>nuevo_nombre</strong> (<strong>relacion</strong>)  <br/>
+						            Reemplazar "<strong>nuevo_nombre</strong>" y "<strong>relacion</strong>" por un nuevo nombre para la relaci&#243;n y la relaci&#243;n a renombrar. Esta forma no modifica los atributos.<br/>
+						            <br/>
+						            <strong>Ejemplo de uso utilizando la BD "empleados_sv":</strong><br/>
+						            1. Relaci&#243;n y todos los Atributos: RENOMBRAR aux(id_asignacion, id_trabajador, id_edificio, fecha_inicio) (asignacion)<br/>
+						            2. Solo Relaci&#243;n: RENOMBRAR aux(asignacion)            						            
+						        </div>
+						    </p:tooltip>
+						</p:commandButton>
+														
+						<p:commandButton id="unionButton" type="push" value="Union &#8746;"
+						    action="#{dtGestionarEjerciciosBean.ayudaUnion}" update="form" ajax="true">						
+						    <p:tooltip for="unionButton" escape="false">
+						        <div>
+						            <strong>UNION</strong><br/>
+						            Muestra las tuplas de dos relaciones compatibles (est&#225;n definidas sobre el mismo conjunto de atributos) y excluye las tuplas repetidas.<br/>
+						            <br/>
+						            <strong>Estructura:</strong><br/>
+						            <strong>relacion</strong> UNION <strong>relacion</strong><br/>
+						            Reemplazar "<strong>relacion</strong>" y "<strong>relacion</strong>" por las relaciones a unir.<br/>
+						            <br/>
+						            <strong>Ejemplo de uso utilizando la BD "empleados_sv". Donde une los datos de los trabajadores 'electricistas' y 'guardia', por pasos:</strong><br/>
+						            1. t_electricista := SELECCIONAR (oficio = 'electricista') (trabajador)<br/>
+						            2. t_guardia := SELECCIONAR (oficio = 'guardia') (trabajador)<br/>
+									3. t_electricista UNION t_guardia
+		            						            
+						        </div>
+						    </p:tooltip>
+						</p:commandButton>
+							
+						<p:commandButton id="interButton" type="push" value="Interseccion &#8746;"
+						    action="#{dtGestionarEjerciciosBean.ayudaInterseccion}" update="form" ajax="true">						
+						    <p:tooltip for="interButton" escape="false">
+						        <div>
+						            <strong>INTERSECCION</strong><br/>
+						            Muestra las tuplas que coinciden en valor de sus atributos, entre dos relaciones compatibles (est&#225;n<br/>
+						            definidas sobre el mismo conjunto de atributos).<br/>
+						            <br/>
+						            <strong>relacion</strong> INTER <strong>relacion</strong><br/>
+						            Reemplazar "<strong>relacion</strong>" y "<strong>relacion</strong>" por las relaciones a intersectar.<br/>
+						            <br/>
+						            <strong>Ejemplo de uso utilizando la BD "empleados_sv". Donde intersecta los datos de los trabajadores<br/> 
+						            'electricistas' con todos los trabajadores, por pasos:</strong><br/>
+						            1. t_elec := SELECCIONAR (oficio = 'electricista') (trabajador)<br/>
+									2. t_elec INTER trabajador
+		            						            
+						        </div>
+						    </p:tooltip>
+						</p:commandButton>
+																
+						<p:commandButton id="diferenciaButton" type="push" value="Diferencia &#8211;"
+						    action="#{dtGestionarEjerciciosBean.ayudaDiferencia}" update="form" ajax="true">						
+						    <p:tooltip for="diferenciaButton" escape="false">
+						        <div>
+						            <strong>DIFERENCIA</strong><br/>
+						            Muestra las tuplas que est&#225;n en una relaci&#243;n 1 pero no est&#225;n en la relaci&#243;n 2, entre dos relaciones compatibles<br/>
+						            (est&#225;n definidas sobre el mismo conjunto de atributos).<br/>
+						            <br/>
+						            <strong>Estructura:</strong><br/>
+						            <strong>relacion</strong> DIFERENCIA <strong>relacion</strong><br/>
+						            Reemplazar "<strong>relacion</strong>" y "<strong>relacion</strong>" por las relaciones a diferenciar, donde la segunda resta a la primera.<br/>
+						            <br/>
+						            <strong>Ejemplo de uso utilizando la BD "empleados_sv". Lista de todos los trabajadores que no son 'electricistas',<br/> 
+						            por pasos:</strong><br/>
+						            1. t_elec := SELECCIONAR (oficio = 'electricista') (trabajador)<br/>
+									2. trabajador DIFERENCIA t_elec
+		            						            
+						        </div>
+						    </p:tooltip>
+						</p:commandButton>								
+							
+						<p:commandButton id="cruzButton" type="push" value="Producto Cruz &#215;"
+						    action="#{dtGestionarEjerciciosBean.ayudaCruz}" update="form" ajax="true">						
+						    <p:tooltip for="cruzButton" escape="false">
+						        <div>
+						            <strong>PRODUCTO CRUZ</strong><br/>
+						            Muestra la combinaci&#243;n entre todas las tuplas de dos relaciones.<br/>
+						            <br/>
+						            <strong>Estructura:</strong><br/>
+						            <strong>relacion</strong> CRUZ <strong>relacion</strong><br/>
+						            Reemplazar "<strong>relacion</strong>" y "<strong>relacion</strong>" por las relaciones a combinar.<br/>
+						            <br/>
+						            <strong>Ejemplo de uso utilizando la BD "empleados_sv":</strong><br/>
+									edificio CRUZ trabajador
+		            						            
+						        </div>
+						    </p:tooltip>
+						</p:commandButton>
+			
+						<p:commandButton id="divButton" type="push" value="Division &#247;"
+						    action="#{dtGestionarEjerciciosBean.ayudaDivision}" update="form" ajax="true">						
+						    <p:tooltip for="divButton" escape="false">
+						        <div>
+						            <strong>DIVISION</strong><br/>
+						            La operaci&#243;n de divisi&#243;n muestra todas las tuplas del dividendo que coinciden con cada tupla de la relaci&#243;n divisor.<br/>
+						            <br/>
+						            <strong>Estructura:</strong><br/>
+						            (<strong>atributo1</strong>,<strong>atributo2</strong>) (<strong>relacion1</strong>) DIVISION (<strong>atributo2</strong>) (<strong>relacion2</strong>)<br/>
+						            Reemplazar "<strong>atributo1</strong>", "<strong>atributo2</strong>", "<strong>relacion1</strong>", "<strong>atributo2</strong>" y "<strong>relacion2</strong>"<br/>
+						            por atributos y relaciones para dividir.<br/>
+						            <br/>
+						            <strong>Ejemplo de uso utilizando la BD "empleados_sv":</strong><br/>
+									(id_trabajador, id_edificio) (asignacion) DIVISION (id_edificio) (edificio)
+		            						            
+						        </div>
+						    </p:tooltip>
+						</p:commandButton>								
+
+						<p:commandButton id="rnaturalButton" type="push" value="Reunion Natural ⋈"
+						    action="#{dtGestionarEjerciciosBean.ayudaReunionNatural}" update="form" ajax="true">						
+						    <p:tooltip for="rnaturalButton" escape="false">
+						        <div>
+						            <strong>REUNION NATURAL</strong><br/>
+						            Combina las tuplas de ambas relaciones (izquierda y derecha), cuando los atributos comunes tienen tuplas iguales.<br/>
+						            <br/>
+						            <strong>Estructura:</strong><br/>
+						            <strong>relacion</strong> REUNION_NATURAL (<strong>condicion_de_igualdad</strong>) <strong>relacion</strong><br/>
+						            Reemplazar "<strong>relacion</strong>", "<strong>condicion_de_igualdad</strong>" y "<strong>relacion</strong>" 
+						            por las relaciones a combinar y su condici&#243;n de igualdad.<br/>
+						            <br/>
+						            <strong>Ejemplo de uso utilizando la BD "empleados_sv":</strong><br/>
+									asignacion REUNION_NATURAL (asignacion.id_trabajador = trabajador.id_trabajador) trabajador
+		            						            
+						        </div>
+						    </p:tooltip>
+						</p:commandButton>	
+							
+						<p:commandButton id="rizqButton" type="push" value="Reunion Ext Izq ]⋈"
+						    action="#{dtGestionarEjerciciosBean.ayudaReunionExtIzq}" update="form" ajax="true">						
+						    <p:tooltip for="rizqButton" escape="false">
+						        <div>
+						            <strong>REUNION EXTERNA IZQUIERDA</strong><br/>
+						            Combina todas las tuplas de la primera relaci&#243;n (izquierda) con las tuplas coincidentes de la segunda relaci&#243;n (derecha).<br/>
+						            <br/>
+						            <strong>Estructura:</strong><br/>
+						            <strong>relacion</strong> REUNION_EXT_IZQ (<strong>condicion_de_igualdad</strong>) <strong>relacion</strong><br/>
+						            Reemplazar "<strong>relacion</strong>", "<strong>condicion_de_igualdad</strong>" y "<strong>relacion</strong>" por las relaciones a combinar y su condici&#243;n de igualdad.<br/>
+						            <br/>
+						            <strong>Ejemplo de uso utilizando la BD "empleados_sv":</strong><br/>
+									asignacion REUNION_EXT_IZQ (asignacion.id_trabajador = trabajador.id_trabajador) trabajador
+		            						            
+						        </div>
+						    </p:tooltip>
+						</p:commandButton>		
+
+						<p:commandButton id="rderButton" type="push" value="Reunion Ext Der ⋈["
+						    action="#{dtGestionarEjerciciosBean.ayudaReunionExtDer}" update="form" ajax="true">						
+						    <p:tooltip for="rderButton" escape="false">
+						        <div>
+						            <strong>REUNION EXTERNA DERECHA</strong><br/>
+						            Combina todas las tuplas de la segunda relaci&#243;n (derecha) con las tuplas coincidentes de la primera relaci&#243;n (izquierda).<br/>
+						            <br/>
+						            <strong>Estructura:</strong><br/>
+						            <strong>relacion</strong> REUNION_EXT_DER (<strong>condicion_de_igualdad</strong>) <strong>relacion</strong><br/>
+						            Reemplazar "<strong>relacion</strong>", "<strong>condicion_de_igualdad</strong>" y "<strong>relacion</strong>" por las relaciones a combinar y su condici&#243;n de igualdad.<br/>
+						            <br/>
+						            <strong>Ejemplo de uso utilizando la BD "empleados_sv":</strong><br/>
+									asignacion REUNION_EXT_DER (asignacion.id_trabajador = trabajador.id_trabajador) trabajador
+		            						            
+						        </div>
+						    </p:tooltip>
+						</p:commandButton>																			
+							
+						<p:commandButton id="rcomButton" type="push" value="Reunion Ext Completa ]⋈["
+						    action="#{dtGestionarEjerciciosBean.ayudaReunionExtComp}" update="form" ajax="true">						
+						    <p:tooltip for="rcomButton" escape="false">
+						        <div>
+						            <strong>REUNION EXTERNA COMPLETA</strong><br/>
+						            Combina todas las tuplas de ambas relaciones (izquierda y derecha).<br/>
+						            <br/>
+						            <strong>Estructura:</strong><br/>
+						            <strong>relacion</strong> REUNION_EXT_FULL (<strong>condicion_de_igualdad</strong>) <strong>relacion</strong><br/>
+						            Reemplazar "<strong>relacion</strong>", "<strong>condicion_de_igualdad</strong>" y "<strong>relacion</strong>" por las relaciones a combinar y<br/>
+						            su condici&#243;n de igualdad.<br/>
+						            <br/>
+						            <strong>Ejemplo de uso utilizando la BD "empleados_sv":</strong><br/>
+									asignacion REUNION_EXT_FULL (asignacion.id_trabajador = trabajador.id_trabajador) trabajador
+		            						            
+						        </div>
+						    </p:tooltip>
+						</p:commandButton>	
+							
+						<p:commandButton id="asignarButton" type="push" value="Asignar &#8592;"
+						    action="#{dtGestionarEjerciciosBean.ayudaAsignar}" update="form" ajax="true">						
+						    <p:tooltip for="asignarButton" escape="false">
+						        <div>
+						            <strong>ASIGNAR</strong><br/>
+						            Almacena en una relaci&#243;n auxiliar el resultado de una consulta.<br/>
+						            <br/>
+						            <strong>Estructura:</strong><br/>
+						            <strong>relacion</strong> := <strong>consulta</strong><br/>
+						            Reemplazar "<strong>relacion</strong>" y "<strong>consulta</strong>" por el nombre de su relaci&#243;n auxiliar y la consulta que almacenar&#225;.<br/>
+						            <br/>
+						            <strong>Ejemplo de uso utilizando la BD "empleados_sv":</strong><br/>
+									t_electricista := SELECCIONAR (oficio = 'electricista') (trabajador)
+		            						            
+						        </div>
+						    </p:tooltip>
+						</p:commandButton>	
+							
+						<p:commandButton id="ordenarButton" type="push" value="Ordenar Por &#932;"
+						    action="#{dtGestionarEjerciciosBean.ayudaOrdenar}" update="form" ajax="true">						
+						    <p:tooltip for="ordenarButton" escape="false">
+						        <div>
+						            <strong>ORDERNAR POR</strong><br/>
+						            Permite ordenar las tuplas de una relaci&#243;n de forma ascendente o descendente, para una relaci&#243;n.<br/>
+						            ORDENAR POR permite los siguiente tipos de ordenaci&#243;n: <strong>ASC</strong> o <strong>asc</strong> para Ascendente y <strong>DESC</strong> o <strong>desc</strong> para Descendente.<br/>
+						            <br/>
+						            <strong>Estructura:</strong><br/>
+						            ORDENAR <strong>atributo</strong>(<strong>asc/desc</strong>) (<strong>relacion</strong>) 
+						            Reemplazar "<strong>atributo</strong>", "<strong>asc/desc</strong>" y "<strong>relacion</strong>" por el atributo y el tipo de<br/>
+						            ordenaci&#243;n para la relaci&#243;n a ordenar.<br/>
+						            <br/>
+						            <strong>Ejemplo de uso utilizando la BD "empleados_sv":</strong><br/>
+									ORDENAR tarifa_sem(desc) (trabajador)
+									
+		            						            
+						        </div>
+						    </p:tooltip>
+						</p:commandButton>		
+							
+						<p:commandButton id="agruparButton" type="push" value="Agrupar Por &#915;"
+						    action="#{dtGestionarEjerciciosBean.ayudaAgrupar}" update="form" ajax="true">						
+						    <p:tooltip for="agruparButton" escape="false">
+						        <div>
+						            <strong>AGRUPAR POR</strong><br/>
+						            Se utiliza para agrupar tuplas similares en una relaci&#243;n y calcular agregaciones sobre esos grupos.<br/>
+						            AGRUPAR POR permite las siguientes funciones de agregaciones: <br/>
+						            1. <strong>COUNT</strong> o <strong>count</strong> para contar. Toma un conjunto de valores y devuelve la cantidad de elementos del conjunto.<br/>
+						            2. <strong>MAX</strong> o <strong>max</strong> para m&#225;ximo. Toma un conjunto de valores y devuelve el mayor valor del conjunto.<br/>
+						            3. <strong>MIN</strong> o <strong>min</strong> para m&#205;nimo. Toma un conjunto de valores y devuelve el menor valor del conjunto.<br/>
+						            4. <strong>SUM</strong> o <strong>sum</strong> para suma. Toma un conjunto de valores y devuelve la suma de los valores del conjunto.<br/>
+						            5. <strong>AVG</strong> o <strong>avg</strong> para promedio. Toma un conjunto de valores y devuelve el promedio de los valores del conjunto.<br/>
+						            <br/>
+						            <strong>Estructura:</strong><br/>
+						            (<strong>Lista_de_atributos</strong>) AGRUPAR <strong>agregacion</strong>(<strong>atributo</strong>) (<strong>relacion</strong>) <br/>
+						            Reemplazar "<strong>Lista_de_atributos</strong>", "<strong>agregacion</strong>", "<strong>atributo</strong>" y "<strong>relacion</strong>" por atributos a agrupar y la funci&#243;n<br/>
+						            de agregaci&#243;n a aplicar a un atributo de una relaci&#243;n.<br/>
+						            <br/>
+						            <strong>Ejemplo de uso utilizando la BD "empleados_sv":</strong><br/>
+									(oficio) AGRUPAR sum(tarifa_sem) (trabajador)
+									
+		            						            
+						        </div>
+						    </p:tooltip>
+						</p:commandButton>		
+							
+						<p:commandButton id="agregaButton" type="push" value="F. Agregaci&#243;n"
+						    action="#{dtGestionarEjerciciosBean.ayudaFuncionAgregacion}" update="form" ajax="true">						
+						    <p:tooltip for="agregaButton" escape="false">
+						        <div>
+						            <strong>FUNCION DE AGREGACION</strong><br/>
+						            Estas funciones operan en columnas num&#233;ricas y devuelven un &#250;nico valor que representa el resultado de la operaci&#243;n.<br/>
+						            FUNCIONES DE AGREGACI&#211;N permite las siguientes funciones de agregaciones: <br/>
+						            1. <strong>COUNT</strong> o <strong>count</strong> para contar. Toma un conjunto de valores y devuelve la cantidad de elementos del conjunto.<br/>
+						            2. <strong>MAX</strong> o <strong>max</strong> para m&#225;ximo. Toma un conjunto de valores y devuelve el mayor valor del conjunto.<br/>
+						            3. <strong>MIN</strong> o <strong>min</strong> para m&#205;nimo. Toma un conjunto de valores y devuelve el menor valor del conjunto.<br/>
+						            4. <strong>SUM</strong> o <strong>sum</strong> para suma. Toma un conjunto de valores y devuelve la suma de los valores del conjunto.<br/>
+						            5. <strong>AVG</strong> o <strong>avg</strong> para promedio. Toma un conjunto de valores y devuelve el promedio de los valores del conjunto.<br/>
+						            <br/>
+						            <strong>Estructura:</strong><br/>
+						            <strong>funcion_agregacion</strong> <strong>atributo</strong> (<strong>relacion</strong>) <br/>
+						            Reemplazar "<strong>funcion_agregacion</strong>", "<strong>atributo</strong>" y "<strong>relacion</strong>" por una funci&#243;n agregaci&#243;n a aplicar sobre un atributo de una relaci&#243;n.<br/>
+						            <br/>
+						            <strong>Ejemplo de uso utilizando la BD "empleados_sv":</strong><br/>
+									count tarifa_sem (trabajador)		            
+						        </div>
+						    </p:tooltip>
+						</p:commandButton>	
+									
+					</f:facet>
+				</p:toolbar>
+				<h:panelGrid columns="2" style="width:100%">
+					<p:inputText size="150" style="width:95%" id="query" value="#{dtGestionarEjerciciosBean.query}"/>
+					<p:commandButton id="ejecutar" type="push" title="Ejecutar" value="Ejecutar" ajax="true" 
+						action="#{dtGestionarEjerciciosBean.ejecutar}" icon="ui-icon-check" update="form :formDataList"/>	
+				</h:panelGrid>
+				
+				<p:spacer/>
+				
+				
+				
+				<p:fieldset legend="Resultado" style="height: 225px; overflow: auto;">
+				    <h:panelGroup rendered="#{not empty dtGestionarEjerciciosBean.errorMessage}">
+				        <p:panel id="errorPanel" style="border: none; background: none; height: 100%;">
+				            <p:outputLabel value="#{dtGestionarEjerciciosBean.errorMessage}" escape="false"
+				                style="color: red; background-color: #ffdddd; padding: 10px; border: 1px solid #ff0000; display: inline-block; height: 100%; width: 100%;">
+				                <p:tooltip for="errorPanel" value="Error" showEffect="fade" hideEffect="fade" />
+				            </p:outputLabel>
+				        </p:panel>
+				    </h:panelGroup>
+				
+				    <h:panelGroup rendered="#{empty dtGestionarEjerciciosBean.errorMessage}" style="height: 100%;">
+				        <div style="height: 100%;">
+				            <p:dataTable value="#{dtGestionarEjerciciosBean.data}" var="item" style="width:100%!important;"
+				                emptyMessage="#{dtGestionarEjerciciosBean.primerCarga ? 'Ingrese su consulta en Algebra Relacional' : 'La relaci&#243;n est&#225; vac&#237;a'}">
+				                <f:facet name="header">
+				                    <h:outputText value="#{dtGestionarEjerciciosBean.tableName}" />
+				                </f:facet>
+				                <p:columns value="#{dtGestionarEjerciciosBean.columnNames}" var="columnName" columnIndexVar="i">
+				                    <f:facet name="header">
+				                        <h:outputText value="#{columnName}" />
+				                    </f:facet>
+				                    <h:outputText value="#{item[i] != null ? item[i] : 'Nulo'}" />
+				                </p:columns>
+				            </p:dataTable>
+				        </div>
+				    </h:panelGroup>
+				</p:fieldset>
+
+
+					<h:panelGrid columns="1" style="width:100%; position: relative;">
+					    <p:commandButton value="Limpiar Resultado" action="#{dtGestionarEjerciciosBean.limpiarResultados}"
+					        icon="ui-icon-trash" update="form :formDataList" style="float: right;">
+					    </p:commandButton>
+					</h:panelGrid>
+				
+				
+				
+				
+				
+					
+				<p:spacer/>	
+							
+				<p:fieldset legend="Historial">
+				
+				<p:scrollPanel mode="native" style="height:200px" styleClass="divs">		
+					<p:inputTextarea rows="10" style="width:98%" id="grupoConsultas" disabled="false" value="#{dtGestionarEjerciciosBean.queryList}"/>				
+				</p:scrollPanel>
+				<div style="float: right; font-style: italic;"
+					>El Historial tambi&#233;n funciona como borrador, su contenido es editable.</div>	
+				
+				</p:fieldset>
+				
+							
+				</p:panel>
+				</p:fieldset>
+			
+			</h:form>
+
+		</ui:define>
+	</ui:composition>
+
+</h:body>
+</html>

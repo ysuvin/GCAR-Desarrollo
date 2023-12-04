@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:body>
+	
+	<ui:composition template="/templates/homeTemplate.xhtml">
+		<ui:define name="title">Algebra Relacional - UV</ui:define>
+		<ui:define name="content">
+			
+			<h:form>			
+				<p:panel styleClass="divs">			
+					<h:panelGrid columns="3" cellpadding="5">
+						<h:commandLink value="Inicio" styleClass="linkTitulo" action="home"/>
+						>
+						<h:outputText value="Crear Base de Datos" styleClass="tituloPagina"/>
+					</h:panelGrid>									
+				</p:panel>
+			
+			</h:form>
+			
+			<p:spacer/>
+			
+			<h:form onkeypress="if (event.keyCode == 13) {return false; }">
+			
+				<p:dialog id="help" widgetVar="dlg" header="Ayuda" resizable="false" showEffect="fade" hideEffect="fade">
+					<p:fieldset legend="Crear Base de Datos" style="font-weight: bold;" >
+						<h2/>
+						1. Ingrese todos los campos solicitados del formulario <p/>
+						2. Cuando esté listo, seleccione el botón <p:commandButton value="Siguiente" icon="ui-icon-arrowthick-1-e" readonly="true" /> para seguir llenando el formulario <p/>
+						3. Seleccione el botón <p:commandButton value="Atrás" icon="ui-icon-arrowthick-1-w" readonly="true" /> para volver al formulario anterior <p/>						
+						4. Finalmente, seleccione el botón <p:commandButton value="Crear" icon="ui-icon-check" readonly="true" /> para generar la nueva Base de Datos<p/>
+						5. El nombre de la BD debe comenzar con una letra minúscula y después puede contener solo letras minúsculas, números y guiones bajos, sin incluir caracteres especiales ni letras mayúsculas.<p/>
+						<h2/>
+					</p:fieldset>
+			    </p:dialog> 
+											
+				<p:growl id="growl" sticky="true" showDetail="false"/>
+				<p:fieldset styleClass="divs">
+				<f:facet name="legend">
+					<h:panelGrid columns="2" cellpadding="5">
+						<h:outputText value="Crear Base de Datos" />
+						<h:outputLink value="javascript:void(0)" onclick="PF('dlg').show();" >
+							<span class="ui-icon ui-icon-help" />
+						</h:outputLink>
+					</h:panelGrid>
+				</f:facet>		
+			    <p:wizard showStepStatus="false" nextLabel="Confirmar" backLabel="Atrás">
+			        <p:tab id="bd" title="Base de Datos">
+			            <p:panel header="Datos de la Base de Datos" styleClass="formato">
+			            
+			                <h:panelGrid columns="3" columnClasses="label, value">
+			                    <h:outputText value="Nombre *"  styleClass="formato"/>
+			                    <p:inputText id="nombre" value="#{gestionarEsquemasBean.nuevo.nombre}" label="Nombre" 
+			                    	required="true" requiredMessage="Debe ingresar el nombre de la Base de Datos"
+			                    	validatorMessage="El nombre de la BD debe comenzar con una letra minúscula y después
+			                    						puede contener solo letras minúsculas, números y guiones bajos, sin 
+			                    						incluir caracteres especiales ni letras mayúsculas." >
+			                    	<f:validateRegex pattern="^[a-z][a-z0-9_]*" />
+			                    </p:inputText>
+			                    <p:message for="nombre" />
+						                  			                    
+				                <h:panelGrid  rendered="#{usuario.tipo == 1}">
+				                	<h:outputText value="Dejar Visible *" />
+				                	<h:outputText value="a los Alumnos " />
+				                </h:panelGrid>
+				                
+	        					<p:selectBooleanButton rendered="#{usuario.tipo == 1}" id="visible" value="#{gestionarEsquemasBean.nuevo.visible}" onLabel="True" offLabel="False" onIcon="ui-icon-check" offIcon="ui-icon-close" />
+				 				<p:message rendered="#{usuario.tipo == 1}" for="visible" /> 
+			 					
+			                </h:panelGrid>
+			            </p:panel>
+			        </p:tab>
+			 
+			        <p:tab id="confirm" title="Confirmacion">
+			            <p:panel header="Verificar Datos">
+			                <h:panelGrid id="confirmation" columns="1" columnClasses="grid" style="margin:0 auto !important;">
+			                
+			                	<p:fieldset legend="Base de Datos">
+			                    <h:panelGrid columns="2" columnClasses="label, value" style="width: 300px;">
+			                    
+			                        <h:outputText value="Nombre: " styleClass="formato" />
+			                        <h:outputText value="#{gestionarEsquemasBean.nuevo.nombre}" styleClass="outputLabel"/>
+			 
+			                        <h:outputText value="Visible: " styleClass="formato" rendered="#{usuario.tipo == 1}" />
+			                        <h:outputText value="#{gestionarEsquemasBean.nuevo.visible}" styleClass="outputLabel" rendered="#{usuario.tipo == 1}"/>
+			                        
+			                    </h:panelGrid>
+			 					</p:fieldset>
+			                </h:panelGrid>
+			 				
+			 				<h:panelGrid style="margin:0 auto !important;">
+			 					 <p:commandButton value="Crear" icon="ui-icon-check" action="#{gestionarEsquemasBean.crear}" update="growl" ajax="true" process="@this"/>
+			 				</h:panelGrid>
+			               
+			            </p:panel>
+			        </p:tab>
+			    </p:wizard>
+				</p:fieldset>
+			</h:form>
+		</ui:define>
+	</ui:composition>
+
+</h:body>
+</html>

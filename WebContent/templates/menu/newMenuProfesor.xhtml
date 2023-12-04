@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"  
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+<h:body>
+	<h:form>
+    	<p:menubar styleClass="divs" style="background:#c9c9c9!important">
+    	
+    		
+    		<p:menuitem value="Visualización de Estadísticas" styleClass="formato" action="verEstadisticas" ajax="false"/>
+    		
+    		<p:submenu label="Consultas" disabled="#{bd == null}" styleClass="formato" >
+    			<p:menuitem value="Hacer Consulta AR" ajax="false" disabled="#{bd == null}" action="#{menuView.hacerConsulta}" />
+    			<p:menuitem value="Hacer Consulta SQL" ajax="false" disabled="#{bd == null}" action="#{menuView.hacerConsultaSQL}" />
+    		</p:submenu>   		    		   		
+    	    		
+    		<p:submenu label="Gestionar Ejercicios" disabled="#{bd == null}" styleClass="formato">
+    			<p:menuitem value="Gestionar Ejercicios" disabled="#{bd == null}" styleClass="formato" action="#{menuView.gestionarEjercicio}" ajax="false"/>
+    			<p:separator/>
+    			<p:menuitem value="Responder Ejercicios" disabled="#{bd == null}" styleClass="formato" action="#{menuView.responderEjercicio}" ajax="false"/>
+    		</p:submenu>
+	   		   		
+    		<p:submenu label="Gestionar BD" styleClass="formato">
+    			<p:menuitem value="Crear BD" styleClass="formato" url="crearBD.xhtml" ajax="false"/>
+    			<p:menuitem value="Eliminar BD" styleClass="formato" url="eliminarBD.xhtml" ajax="false"/>
+    			<p:menuitem value="Modificar BD" styleClass="formato" url="modificarBD.xhtml" ajax="false"/>
+    			<p:separator/>    			
+    			<p:menuitem value="Cargar BD" styleClass="formato" url="cargarBD.xhtml" ajax="false" />
+    		</p:submenu>
+    		
+    		<p:submenu label="Gestionar Relaciones" styleClass="formato">
+    			<p:menuitem value="Agregar Relación" disabled="#{bd == null}" styleClass="formato" action="#{menuView.agregarRelacion}" ajax="false"/>
+    			<p:menuitem value="Eliminar Relación" disabled="#{bd == null}" styleClass="formato" action="#{menuView.eliminarRelacion}" ajax="false"/>
+    			<p:menuitem value="Modificar Relación" disabled="#{bd == null}" styleClass="formato"  action="#{menuView.modificarRelacion}" ajax="false"/>
+    			<p:menuitem value="Gestionar Tuplas" disabled="#{bd == null}" styleClass="formato" action="#{menuView.verRelacion}" ajax="false"/>
+    		</p:submenu>
+    		   		
+    		<p:submenu label="Gestionar Usuarios" styleClass="formato">
+    			<p:menuitem value="Crear Cuenta" styleClass="formato" url="crearCuenta.xhtml" ajax="false"/>
+    			<p:menuitem value="Eliminar Cuenta" styleClass="formato" url="eliminarCuenta.xhtml" ajax="false"/>
+    			<p:menuitem value="Modificar Cuenta" styleClass="formato" url="modificarCuenta.xhtml" ajax="false"/>
+    		</p:submenu>
+    		 		    		
+			<p:menuitem value="Modificar Cuenta Propia" styleClass="formato" action="modificarCuentaProfesor" ajax="false"/>
+
+
+    		<f:facet name="options">
+            	<p:commandButton value="Desconectar" icon="ui-icon-extlink" action="#{menuView.logout}" />
+        	</f:facet>
+    		
+    	</p:menubar>
+	</h:form>
+</h:body>
+
+</html>

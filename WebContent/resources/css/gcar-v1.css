@@ -1,0 +1,12 @@
+/*** override primefaces style ***/
+.ui-messages-info, .ui-messages-error, .ui-messages-warn, .ui-messages-fatal{
+	font-size: small !important;
+	font-size-adjust: inherit !important;
+}
+
+.user-image{
+	background-color: white;
+}
+
+
+

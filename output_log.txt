@@ -1,0 +1,15 @@
+ANT_OPTS is set to  -Djava.security.manager=allow
+Buildfile: C:\Users\yianv\OneDrive\Escritorio\gcar Desarrollo\GCAR\build.xml
+
+init:
+    [mkdir] Created dir: C:\Users\yianv\OneDrive\Escritorio\gcar Desarrollo\GCAR\build\classes
+    [mkdir] Created dir: C:\Users\yianv\OneDrive\Escritorio\gcar Desarrollo\GCAR\dist
+
+compile:
+    [javac] Compiling 56 source files to C:\Users\yianv\OneDrive\Escritorio\gcar Desarrollo\GCAR\build\classes
+
+war:
+      [war] Building war: C:\Users\yianv\OneDrive\Escritorio\gcar Desarrollo\GCAR\dist\GCAR.war
+
+BUILD SUCCESSFUL
+Total time: 5 seconds

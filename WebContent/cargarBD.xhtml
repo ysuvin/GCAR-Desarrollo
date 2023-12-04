@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:body>
+
+	<ui:composition template="/templates/homeTemplate.xhtml">
+		<ui:define name="title">Algebra Relacional - UV</ui:define>
+		<ui:define name="content">
+			
+			<h:form>			
+				<p:panel styleClass="divs">
+					<h:panelGrid columns="3" cellpadding="5">
+						<h:commandLink value="Inicio" styleClass="linkTitulo" action="home"/>
+						>
+						<h:outputText value="Cargar Base de Datos" styleClass="tituloPagina"/>
+					</h:panelGrid>
+				</p:panel>
+			</h:form>
+			
+			<p:spacer/>
+				
+			<h:form id="form" onkeypress="if (event.keyCode == 13) {return false; }">
+				<p:growl id="growl" showDetail="false"/>
+				
+				<p:dialog id="help" widgetVar="dlg" header="Ayuda" resizable="false" showEffect="fade" hideEffect="fade">
+					<p:fieldset legend="Cargar Base de Datos" style="font-weight: bold;" >
+						<h2/>
+						1. Elija una Base de Datos de la tabla seleccionando el botón <p:commandButton icon="ui-icon-check" readonly="true" /> <p/>
+						2. Verifique los datos de la Base de Datos y seleccione el botón <p:commandButton value="Cargar" icon="ui-icon-check" readonly="true" /> para cargar la Base de Datos <p/>
+						3. Si no es la Base de Datos que desea cargar, sólo basta con cerrar el cuadro de mensaje y elegir otra Base de Datos apretando el botón <p:commandButton icon="ui-icon-pencil" readonly="true" /> <p/>
+						4. Si desea buscar una Base de Datos, ingrese algún campo de búsqueda en la sección <h:outputText value="Buscar en todos los Campos: " style="color:#e69700"/> <p:inputText style="width:150px" placeholder="Buscar" readonly="true"/>
+						<h2/>
+					</p:fieldset>
+			    </p:dialog>  
+			    
+				<p:fieldset styleClass="divs">
+				<f:facet name="legend">
+					<h:panelGrid columns="2" cellpadding="5">
+						<h:outputText value="Cargar Base de Datos" />
+						<h:outputLink value="javascript:void(0)" onclick="PF('dlg').show();" >
+							<span class="ui-icon ui-icon-help" />
+						</h:outputLink>
+					</h:panelGrid>
+				</f:facet>
+				
+			    <p:dataTable id="radioDT" var="bd" value="#{gestionarEsquemasBean.bds}" widgetVar="bdsTable"
+			                 emptyMessage="No se encuentran Bases de Datos con este criterio" filteredValue="#{gestionarEsquemasBean.filteredBds}"
+			                 paginator="true" rows="12"
+				             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+<!-- 			                 selectionMode="single" selection="#{gestionarEsquemasBean.selectedBd}" rowKey="#{bd.nombre}"> -->
+			        		 
+			        <f:facet name="header">
+			      		<p:outputPanel style="text-align: right;">
+			                <h:outputText value="Buscar en todos los Campos: " />
+			                <p:inputText id="globalFilter" onkeyup="PF('bdsTable').filter()" style="width:150px" placeholder="Buscar"/>
+			            </p:outputPanel>
+			        </f:facet>
+<!-- 			        <p:ajax event="rowSelect" update=":form:bdDetail" oncomplete="PF('bdDialog').show()"/> -->
+<!-- 			        <p:column selectionMode="single" style="width:15px;text-align:center"/>			         -->
+			      	<p:column style="width:70px;text-align: center">
+             			<p:commandButton update=":form:bdDetail" oncomplete="PF('bdDialog').show()" value="Cargar" title="Cargar">
+                			<f:setPropertyActionListener value="#{bd}" target="#{gestionarEsquemasBean.selectedBd}" />
+            			</p:commandButton>
+            		</p:column>
+			        <p:column headerText="Creador" filterBy="#{bd.rut}" filterStyle="display:none">
+			            <h:outputText value="#{bd.rut}" />
+			        </p:column>
+			        <p:column headerText="Nombre" filterBy="#{bd.nombre}" filterStyle="display:none" filterMatchMode="contains">
+			            <h:outputText value="#{bd.nombre}" />
+			        </p:column>
+			        <p:column headerText="Visibilidad" filterBy="#{bd.visible}" filterStyle="display:none" filterMatchMode="contains">
+			            <h:outputText value="#{bd.visible}" />
+			        </p:column>
+			    </p:dataTable>
+			    </p:fieldset>
+
+			    <p:dialog header="Cargar Base de Datos" widgetVar="bdDialog" modal="false" showEffect="fade" hideEffect="fade" resizable="false">
+			        <p:outputPanel id="bdDetail" style="text-align:left;">
+			            
+			            <p:fieldset>
+			            	<f:facet name="legend">
+			            	<h:panelGrid styleClass="divs" columns="2" cellpadding="10">
+				        		<span class="ui-icon ui-icon-info" />	        		
+				        		<h:outputText  value="¿Desea cargar la Base de Datos?" style="font-weight: bold;"/>
+			        		</h:panelGrid>	
+			            	</f:facet>
+			            <h:panelGrid  columns="2" cellpadding="5" cellspacing="2" columnClasses="label,value" style="margin:0 auto !important;">
+			 
+			                <h:outputText value="Rut del Creador: " />
+			                <h:outputText value="#{gestionarEsquemasBean.selectedBd.rut}" />
+			 
+			                <h:outputText value="Nombre:" />
+			                <h:outputText value="#{gestionarEsquemasBean.selectedBd.nombre}" />
+			                
+			                <h:outputText value="Visibilidad: " />
+			                <h:outputText value="#{gestionarEsquemasBean.selectedBd.visible}" />
+ 
+			            </h:panelGrid>
+			            </p:fieldset>
+			            
+			            <h:panelGrid style="margin: 0 auto !important">
+			            	<p:commandButton update="form" icon="ui-icon-check" value="Confirmar" ajax="true" action="#{gestionarEsquemasBean.cargar}" />
+			            </h:panelGrid>	
+			            	
+			        </p:outputPanel>
+			    </p:dialog>
+    
+			</h:form>
+		</ui:define>
+	</ui:composition>
+
+</h:body>
+</html>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:body>
+
+	<f:metadata>
+		<f:event listener="#{newLoginBean.isAdmin}" type="preRenderView" />
+	</f:metadata>
+	
+	<ui:composition template="/templates/homeTemplate.xhtml">
+		<ui:define name="title">Algebra Relacional - UV</ui:define>
+		<ui:define name="content">
+			
+			<h:form>			
+				<p:panel styleClass="divs">
+					<h:panelGrid columns="3" cellpadding="5">
+						<h:commandLink value="Inicio" styleClass="linkTitulo" action="home"/>
+						>
+						<h:outputText value="Modificar Cuenta Estudiante" styleClass="tituloPagina"/>
+					</h:panelGrid>
+				</p:panel>
+			</h:form>
+			
+			<p:spacer/>
+				
+			<h:form id="form" onkeypress="if (event.keyCode == 13) {return false; }">
+				<p:growl id="growl" showDetail="false"/>
+				
+				<p:dialog id="help" widgetVar="dlg" header="Ayuda" resizable="false" showEffect="fade" hideEffect="fade">
+					<p:fieldset legend="Modificar Cuenta Estudiante" style="font-weight: bold;" >
+						<h2/>
+						1. Elija un estudiante de la tabla seleccionando el botón <p:commandButton icon="ui-icon-pencil" readonly="true" /> <p/>
+						2. Modifique los datos del estudiante y seleccione el botón <p:commandButton value="Modificar" icon="ui-icon-pencil" readonly="true" /> para aceptar los cambios <p/>
+						3. Si no es el Estudiante que desea modificar, sólo basta con cerrar el cuadro de mensaje y elegir otro estudiante apretando el botón <p:commandButton icon="ui-icon-pencil" readonly="true" /> <p/>
+						4. Si desea buscar un estudiante, ingrese algún campo de búsqueda en la sección <h:outputText value="Buscar en todos los Campos: " style="color:#e69700"/> <p:inputText style="width:150px" placeholder="Buscar" readonly="true"/>
+						<h2/>
+					</p:fieldset>
+			    </p:dialog>  
+			    
+				<p:fieldset styleClass="divs">
+				<f:facet name="legend">
+					<h:panelGrid columns="2" cellpadding="5">
+						<h:outputText value="Modificar Cuenta" />
+						<h:outputLink value="javascript:void(0)" onclick="PF('dlg').show();" >
+							<span class="ui-icon ui-icon-help" />
+						</h:outputLink>
+					</h:panelGrid>
+				</f:facet>	
+				
+			    <p:dataTable id="radioDT" var="user" value="#{gestionarCuentasBean.users}" widgetVar="usersTable"
+			                 emptyMessage="No se encuentran Estudiantes con este criterio" filteredValue="#{gestionarCuentasBean.filteredUsers}"
+			                 paginator="true" rows="12"
+				             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+			        <f:facet name="header">
+			      		<p:outputPanel style="text-align: right;">
+			                <h:outputText value="Buscar en todos los Campos: " />
+			                <p:inputText id="globalFilter" value="#{gestionarCuentasBean.search}" onkeyup="PF('usersTable').filter()" style="width:150px" placeholder="Buscar"/>
+			            </p:outputPanel>
+			        </f:facet>
+			        <p:column style="width:35px;text-align: center">
+             			<p:commandButton process="radioDT" update=":form:userDetail" oncomplete="PF('userDialog').show()" icon="ui-icon-pencil" title="Modificar">
+                			<f:setPropertyActionListener value="#{user}" target="#{gestionarCuentasBean.selectedUser}" />
+            			</p:commandButton>
+            		</p:column>			      	
+			        <p:column headerText="Rut" filterBy="#{user.rut}" filterStyle="display:none">
+			            <h:outputText value="#{user.rut}" />
+			        </p:column>
+			        <p:column headerText="Nombre" filterBy="#{user.nombre1}" filterStyle="display:none" filterMatchMode="contains">
+			            <h:outputText value="#{user.nombre1}" />
+			        </p:column>
+			        <p:column headerText="Apellido Paterno" filterBy="#{user.paterno}" filterStyle="display:none" filterMatchMode="contains">
+			            <h:outputText value="#{user.paterno}" />
+			        </p:column>
+			    	<p:column headerText="Apellido Materno" filterBy="#{user.materno}" filterStyle="display:none" filterMatchMode="contains">
+			            <h:outputText value="#{user.materno}" />
+			        </p:column>
+			        <p:column headerText="Mail" filterBy="#{user.mail}" filterStyle="display:none" filterMatchMode="contains">
+			            <h:outputText value="#{user.mail}" />
+			        </p:column>
+			        <p:column headerText="Año de Ingreso" filterStyle="display:none" filterBy="#{user.anyo}">
+			            <h:outputText value="#{user.anyo}" />
+			        </p:column>			        
+			    </p:dataTable>		    
+			    </p:fieldset>
+
+			    <p:dialog header="Modificar Campos" widgetVar="userDialog" modal="false" showEffect="fade" hideEffect="fade" resizable="false"> 
+			        <p:outputPanel id="userDetail" style="text-align:left;">		       
+		        
+			            <p:fieldset>
+			            	<f:facet name="legend">
+			            	<h:panelGrid styleClass="divs" columns="2" cellpadding="10">
+				        		<span class="ui-icon ui-icon-info" />	        		
+				        		<h:outputText  value="Seleccione el botón Modificar para guardar los cambios" style="font-weight: bold;"/>
+			        		</h:panelGrid>	
+			            	</f:facet>
+			            <h:panelGrid  columns="2" cellpadding="5" cellspacing="2" columnClasses="label,value" style="margin:0 auto !important;">
+			 							 				
+			                <h:outputText value="Rut: " />
+			                <h:outputText value="#{gestionarCuentasBean.selectedUser.rut}" />
+			 
+			                <h:outputLabel for="nombre1" value="Primer Nombre: *" />
+				        	<p:inputText value="#{gestionarCuentasBean.selectedUser.nombre1}" 
+				            	requiredMessage="El campo Primer Nombre no debe ser vacío" required="true" label="text"
+		                    	validatorMessage="En el campo Primer Nombre sólo debe ingresar texto">
+		                    	<f:validateRegex pattern="[a-zA-ZñÑáÁéÉíÍóÓúÚäÄëËïÏöÖüÜàÀèÈìÌòÒùÙâÂêÊîÎôÔû]+" />
+		                    </p:inputText>	
+		                
+			                <h:outputLabel for="nombre2" value="Segundo Nombre: *" />
+					        <p:inputText value="#{gestionarCuentasBean.selectedUser.nombre2}" 
+					           	requiredMessage="El campo Segundo Nombre no debe ser vacío" required="true" label="text"				            	
+			                   	validatorMessage="En el campo Segundo Nombre sólo debe ingresar texto">
+			                   	<f:validateRegex pattern="[a-zA-ZñÑáÁéÉíÍóÓúÚäÄëËïÏöÖüÜàÀèÈìÌòÒùÙâÂêÊîÎôÔû]+" />
+			                </p:inputText>
+					        
+					      	<h:outputLabel for="paterno" value="Apellido Paterno: *" />
+					        <p:inputText value="#{gestionarCuentasBean.selectedUser.paterno}"
+					        	requiredMessage="El campo Apellido Paterno no debe ser vacío" required="true" label="text"				            	
+			                    validatorMessage="En el campo Apellido Paterno sólo debe ingresar texto">
+			                    <f:validateRegex pattern="[a-zA-ZñÑáÁéÉíÍóÓúÚäÄëËïÏöÖüÜàÀèÈìÌòÒùÙâÂêÊîÎôÔû]+" />
+			                </p:inputText>
+			 
+			                <h:outputLabel for="materno" value="Apellido Materno: *" />
+					        <p:inputText value="#{gestionarCuentasBean.selectedUser.materno}" 
+					        	requiredMessage="El campo Apellido Materno no debe ser vacío" required="true" label="text"				            	
+			                    validatorMessage="En el campo Apellido Materno sólo debe ingresar texto">
+			                    <f:validateRegex pattern="[a-zA-ZñÑáÁéÉíÍóÓúÚäÄëËïÏöÖüÜàÀèÈìÌòÒùÙâÂêÊîÎôÔû]+" />
+			                </p:inputText>
+			                
+			                <h:outputLabel for="mail" value="Mail: *" />
+					    	   <p:inputText value="#{gestionarCuentasBean.selectedUser.mail}" 
+					            requiredMessage="Debe ingresar su Mail" required="true" label="text"
+					            validatorMessage="Debe ingresar un mail Válido">
+			                    <f:validateRegex pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+			                </p:inputText>	
+			                
+			                <h:outputLabel for="año" value="Año Ingreso: *" />
+					        <p:inputText value="#{gestionarCuentasBean.selectedUser.anyo}" 
+					            requiredMessage="El campo Año Ingreso no debe ser vacío" required="true" label="text"
+			                    validatorMessage="Debe ingresar sólo dígitos">
+			                    <f:validateRegex pattern="[0-9]*$" />
+			                </p:inputText>					        
+					        
+					        <h:outputLabel for="edad" value="Año de Nacimiento: *" />
+					       	<p:inputText value="#{gestionarCuentasBean.selectedUser.edad}"
+					            requiredMessage="El campo Año de Nacimiento no debe ser vacío" required="true" label="text"
+			                   	validatorMessage="Debe ingresar sólo dígitos">
+			                   	<f:validateRegex pattern="[0-9]*$" />
+			                </p:inputText>
+			                                			                
+			            </h:panelGrid>
+			            </p:fieldset>
+			            
+			            <h:panelGrid style="margin:0 auto !important;">
+			            	<p:commandButton update="form" icon="ui-icon-pencil" value="Modificar" ajax="false" action="#{gestionarCuentasBean.update}" >
+			            		<f:actionListener action="#{gestionarCuentasBean.deseleccionar}"/>
+			            	</p:commandButton>			            
+			            </h:panelGrid>
+			            		            	
+			        </p:outputPanel>
+			    </p:dialog>
+    
+			</h:form>
+		</ui:define>
+	</ui:composition>
+
+</h:body>
+</html>

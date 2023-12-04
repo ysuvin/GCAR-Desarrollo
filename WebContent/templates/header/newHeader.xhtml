@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+  
+<h:body>
+
+	<header class="main-header">
+     	<a href="home.xhtml" class="logo"><b>GC</b>AR</a>
+        <nav class="navbar navbar-static-top" role="navigation">
+	        <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+	           	<span class="sr-only">Toggle navigation</span>
+	           	<span class="icon-bar"></span>
+	           	<span class="icon-bar"></span>
+	           	<span class="icon-bar"></span>
+	        </a>
+          	<div class="navbar-custom-menu">
+            	<ul class="nav navbar-nav">
+             		<li class="dropdown user user-menu">
+	               		<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+	                 		<i class="fa fa-user"/>
+	                 		<span class="hidden-xs">
+	                 			<h:outputText value="#{usuario.nombre1} #{usuario.paterno}"/>
+	                 		</span>
+	               		</a>
+			            <ul class="dropdown-menu">
+			                 	<!-- User image -->
+			                 <li class="user-header">
+							    <ui:fragment rendered="#{usuario.tipo == 1}">
+							        <h:graphicImage value="#{resource['img/teacher37.png']}" styleClass="img-circle"/>
+								</ui:fragment>
+								<ui:fragment rendered="#{usuario.tipo == 2}">
+								    <h:graphicImage value="#{resource['img/teacher42.png']}" styleClass="img-circle"/>
+								</ui:fragment>
+				                <p>
+				                 	<h:outputText value="#{usuario.nombre1} #{usuario.paterno}"/> - <h:outputText value="#{usuario.tipo == 1 ? 'Profesor' : 'Alumno'}" />
+				                </p>
+			                </li>
+			                <!-- Menu Footer-->
+			                <li class="user-footer">
+							    <div class="pull-left">
+							        <!-- <a href="#" class="btn btn-default btn-flat">Editar Cuenta</a> -->
+							    </div>
+							    <div class="pull-right">
+			                      	<h:commandButton action="#{newLoginBean.logout}" value="Desconectar" styleClass="btn btn-default btn-flat" />
+			                    </div>
+		                  	</li>
+		                </ul>
+		            </li>
+            	</ul>
+          	</div>
+        </nav>
+    </header>	
+    
+</h:body>
+</html>

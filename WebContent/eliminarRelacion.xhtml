@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:body>
+
+	<f:metadata>
+		<f:event listener="#{newLoginBean.loadBD}" type="preRenderView" />
+		<f:event listener="#{newLoginBean.isMyBd}" type="preRenderView" />
+	</f:metadata>
+
+	<ui:composition template="/templates/homeTemplate.xhtml">
+		<ui:define name="title">Algebra Relacional - UV</ui:define>
+		<ui:define name="content">
+		
+			<h:form>			
+				<p:panel styleClass="divs">
+					<h:panelGrid columns="3" cellpadding="5">
+						<h:commandLink value="Inicio" styleClass="linkTitulo" action="home"/>
+						>
+						<h:outputText value="Eliminar Relación" styleClass="tituloPagina"/>
+					</h:panelGrid>
+				</p:panel>
+			</h:form>
+			
+			<p:spacer/>
+				
+			<h:form id="form" onkeypress="if (event.keyCode == 13) {return false; }">
+				<p:growl id="growl" showDetail="false"/>
+				
+				<p:dialog id="help" widgetVar="dlg" header="Ayuda" resizable="false" showEffect="fade" hideEffect="fade">
+					<p:fieldset legend="Eliminar Relación" style="font-weight: bold;" >
+						<h2/>
+						1. Elija una Relación de la tabla seleccionando el botón <p:commandButton icon="ui-icon-trash" readonly="true" /> <p/>
+						2. Verifique los datos de la Relación a eliminar y seleccione el botón <p:commandButton value="Eliminar" icon="ui-icon-trash" readonly="true" /> para eliminar <p/>
+						3. Si no es la Relación que desea eliminar, sólo basta con cerrar el cuadro de mensaje y elegir otra Relación apretando el botón <p:commandButton icon="ui-icon-trash" readonly="true" /> <p/>
+						4. Si desea buscar una Relación, ingrese algún campo de búsqueda en la sección <h:outputText value="Buscar en todos los Campos: " style="color:#e69700"/> <p:inputText style="width:150px" placeholder="Buscar" readonly="true"/>
+						<h2/>
+					</p:fieldset>
+			    </p:dialog>  
+			    
+				<p:fieldset styleClass="divs">
+				<f:facet name="legend">
+					<h:panelGrid columns="2" cellpadding="5">
+						<h:outputText value="Eliminar Relación" />
+						<h:outputLink value="javascript:void(0)" onclick="PF('dlg').show();" >
+							<span class="ui-icon ui-icon-help" />
+						</h:outputLink>
+					</h:panelGrid>
+				</f:facet>
+				
+			    <p:dataTable id="radioDT" var="relacion" value="#{gestionarRelacionBean.relaciones}" widgetVar="relacionesTable"
+			                 emptyMessage="No se encuentran Relaciones con este criterio" filteredValue="#{gestionarRelacionBean.filteredRelaciones}"
+			                 paginator="true" rows="12"
+				             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+			        <f:facet name="header">
+			      		<p:outputPanel style="text-align: right;">
+			                <h:outputText value="Buscar en todos los Campos: " />
+			                <p:inputText id="globalFilter" onkeyup="PF('relacionesTable').filter()" style="width:150px" placeholder="Buscar"/>
+			            </p:outputPanel>
+			        </f:facet>
+			      	<p:column style="width:35px;text-align: center">
+             			<p:commandButton process="radioDT" update=":form:relacionDetail" oncomplete="PF('relacionDialog').show()" icon="ui-icon-trash" title="Eliminar">
+                			<f:setPropertyActionListener value="#{relacion}" target="#{gestionarRelacionBean.selectedRelacion}" />
+            			</p:commandButton>
+            		</p:column>
+			        <p:column headerText="Nombre" filterBy="#{relacion.nombre}" filterStyle="display:none" filterMatchMode="contains">
+			            <h:outputText value="#{relacion.nombre}" />
+			        </p:column>
+			    </p:dataTable>
+			    </p:fieldset>
+
+			    <p:dialog header="Eliminar Relación" widgetVar="relacionDialog" modal="false" showEffect="fade" hideEffect="fade" resizable="false">
+			        <p:outputPanel id="relacionDetail" style="text-align:left;">
+			            
+			        <p:fieldset>
+			            	<f:facet name="legend">
+			            	<h:panelGrid styleClass="divs" columns="2" cellpadding="10">
+				        		<span class="ui-icon ui-icon-info" />	        		
+				        		<h:outputText  value="¿Desea eliminar la Relación y todos sus datos?" style="font-weight: bold;"/>
+			        		</h:panelGrid>	
+			            	</f:facet>
+			        <p:dataTable id="relacionDT" var="atributo" value="#{gestionarRelacionBean.selectedRelacion.atributos}" widgetVar="atributosTable"
+			          	emptyMessage="No hay atributos" style="width:500px; margin: 0 auto !important">
+				        <f:facet name="header">
+							#{gestionarRelacionBean.selectedRelacion.nombre}
+				        </f:facet>
+				        <p:column headerText="Nombre Atributo">
+				            <h:outputText value="#{atributo.nombre}" />
+				        </p:column>
+				        <p:column headerText="Primario">
+				            <h:outputText value="#{atributo.esPrimario}" />
+				        </p:column>
+				        <p:column headerText="Tipo">
+				            <h:outputText value="#{atributo.tipo}" />
+				        </p:column>
+				    </p:dataTable>
+				    </p:fieldset>			    
+				    
+			        <h:panelGrid style="margin:0 auto !important;">    
+			            <p:commandButton update="form" icon="ui-icon-trash" value="Eliminar" ajax="false" action="#{gestionarRelacionBean.eliminarRelacion}" />
+			        </h:panelGrid>
+			            	
+			        </p:outputPanel>
+			    </p:dialog>
+    
+			</h:form>
+		</ui:define>
+	</ui:composition>
+
+
+</h:body>
+</html>

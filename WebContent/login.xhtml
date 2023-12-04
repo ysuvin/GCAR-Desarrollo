@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+	
+<h:head>
+	<meta charset="UTF-8"/>
+	<title>GCAR | Log in</title>
+	<meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'></meta>
+	<f:facet name="first">
+	
+		<link href="#{request.contextPath}/resources/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+	
+		<h:outputStylesheet name="bootstrap/css/bootstrap.css"/>
+		<h:outputStylesheet name="dist/css/AdminLTE.min.css"/>
+		<h:outputStylesheet name="plugins/iCheck/square/blue.css"/>
+		<h:outputStylesheet name="css/gcar-v1.css"/>
+		
+		<h:outputScript name="plugins/jQuery/jQuery-2.1.3.min.js"/>
+		<h:outputScript name="bootstrap/js/bootstrap.min.js"/>
+		<h:outputScript name="plugins/iCheck/icheck.min.js"/>
+		<h:outputScript name="plugins/fastclick/fastclick.min.js"/>
+		<h:outputScript name="dist/js/app.min.js"/>
+		
+	</f:facet>
+	
+</h:head>
+  
+<h:body class="login-page">
+	<ui:composition template="/templates/loginTemplate.xhtml">
+		<ui:define name="title">Algebra Relacional - UV</ui:define>
+		<ui:define name="content">
+		
+		
+			<div class="login-box">		
+				
+					<p:panel id="tablaPanelLogin" style="text-align:center; margin: 0 auto; overflow: auto;" header="LOGIN - GCAR" styleClass="panel-header"> 
+
+							<!-- <div class="login-logo">
+								<a href="#"><b>GC</b>AR</a>
+							</div> -->
+							
+								<p class="login-box-msg" >Ingrese sus datos</p>
+								<h:form id="form" style="max-width: 350px; margin: 0 auto; font-size: 15px;">
+									<p:messages id="msg" showIcon="false" closable="true" />
+									
+									<div class="form-group has-feedback">
+										<h:outputLabel for="rut " value="Rut    " />
+										<p:inputText styleClass="form-control" id="rut" value="#{userBean.rut}" required="true"
+											validatorMessage="Rut: Ingrese 8 Digitos, sin puntos ni dígito verificador"
+											requiredMessage="Debe ingresar su Rut">
+											<f:validateRegex pattern="[0-9]{8}$" />
+											<p:watermark for="rut" value="Ej: 12345678" />
+										</p:inputText>
+										<span class="fa fa-user form-control-feedback"></span>
+									</div>
+									<p:spacer></p:spacer>
+									
+									<div class="form-group has-feedback">
+										<h:outputLabel for="pass" value="Contraseña " />
+										<p:password id="pass" styleClass="form-control" value="#{userBean.pass}" feedback="false"
+											required="true" requiredMessage="Debe ingresar su contraseña" />
+										<span class="glyphicon glyphicon-lock form-control-feedback"></span>
+									</div>
+									<p:spacer></p:spacer>
+									
+									<div class="row">
+										<div class="col-xs-12">
+											<p:spacer></p:spacer>
+											<p:commandButton id="ingresarButton" action="#{newLoginBean.loginUser}" value="Ingresar"
+												update="msg" styleClass="btn btn-primary btn-block btn-flat">
+											</p:commandButton>
+										</div>
+									</div>
+								</h:form>
+								<p:spacer></p:spacer>
+								<div class="social-auth-links text-center"></div>
+								<a href="registrarse.xhtml" class="text-center">Registrarme como nuevo usuario(a)</a>
+							
+					</p:panel>
+				</div>
+		
+			
+			
+		</ui:define>
+	</ui:composition>
+</h:body>
+  
+</html>
