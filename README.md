@@ -1,1 +1,1 @@
-#Para instalación utilizar la documentación que está dentro de la carpeta Manuales
+# Para instalación utilizar la documentación que está dentro de la carpeta Manuales
